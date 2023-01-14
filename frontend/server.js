@@ -1,22 +1,28 @@
 const express = require("express");
+const serveStatic = require("serve-static");
 
-const app = express();
+var hostname = "localhost";
+var port = 3001;
 
-app.get('/', (req, res) => {
-    res.sendFile("/login.html", {root: __dirname})
-})
+var app = express();
 
-//app.get('/users/:id', (req, res) => {
-//    res.sendFile("/public/user.html", {root: __dirname})
-//})
-//
-//app.get('/users/', (req, res) => {
-//    res.sendFile("/public/users.html", {root: __dirname})
-//})
+app.use(function (req, res, next) {
+  if (req.method != "GET") {
+    res.type(".html");
+    var msg =
+      "<html><body>This server only serves web pages with GET!</body></html>";
+    res.end(msg);
+  } else {
+    next();
+  }
+});
 
+app.use(serveStatic(__dirname + "/public"));
 
-const PORT = 3001
+app.get("/login", (req, res) => {
+    res.sendFile("/public/login.html", { root: __dirname });
+});
 
-app.listen(PORT, () => {
-    console.log(`Client server has started listening on port ${PORT}`)
-})
+app.listen(port, hostname, function () {
+  console.log(`Server hosted at http://${hostname}:${port}`);
+});

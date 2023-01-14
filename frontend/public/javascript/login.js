@@ -1,28 +1,27 @@
-$(document).ready(function () {   
-    $("#Login").click(function () {   
-       var id=$('#email').val(); 
-       var pwd=$('#pwd').val(); 
-       var data = "{\"email\":\""+id+"\", \"password\":\""+pwd+"\"}"; 
-       console.log(data); 
-       $.ajax({                                                                
-            url: 'http://localhost:8081/user/login' ,   
-            type: 'POST',  
-            data: data, 
-            contentType: "application/json; charset=utf-8", 
-            dataType: "json",   
-            success: function (data, textStatus, xhr) {   
-                if (data != null){                     
-                   localStorage.setItem('token',data.token); 
-                   localStorage.setItem('userInfo',data.UserData); 
-                   window.location.assign("http://localhost:3001/profile.html"); 
-                } else { 
-                    console.log("Error"); 
-                }                                                                  
-            },   
-            error: function (xhr, textStatus, errorThrown) {   
-                console.log('Error in Operation');   
-            }   
-       });    
-       return false; 
-    });   
-});   
+console.log(`help me`)
+
+
+$("#actor-query").submit((event) =>{
+    console.log(`help`)
+    event.preventDefault();
+    const reqBody = {
+        queryID: $("#actor_id").val()
+    }
+    const baseUrl = "http://localhost:3000"
+    const actorID = reqBody.queryID
+    axios.get(`${baseUrl}/actors/${actorID}`)
+        .then((response) => {
+            document.getElementById("response").innerHTML = ``
+            console.log(response.data)
+            resp = response.data
+            htmlData = `
+                            <p>First Name: ${multiStringCapitalize(resp.first_name)}</p>
+                            <p>Last Name: ${multiStringCapitalize(resp.last_name)}</p>`;
+
+            $("#response").append(htmlData)
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+})
+

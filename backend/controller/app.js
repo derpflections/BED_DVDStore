@@ -8,9 +8,11 @@ const app = express()
 const bodyParser = require('body-parser')
 const urlencodedParser = bodyParser.urlencoded({ extended: false })
 const storeDB = require("../model/actor.js");
+const cors = require("cors")
 
 app.use(bodyParser.json());
 app.use(urlencodedParser);
+app.use(cors())
 
 
 //endpoint 1
