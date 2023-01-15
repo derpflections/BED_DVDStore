@@ -15,7 +15,6 @@ var commonFunction = {
         properString += properStringArr[i] + " "
     }
     properString = properString.slice(0, properString.length - 1)
+    return properString
     }
 }
-
-module.exports = comFunc;
