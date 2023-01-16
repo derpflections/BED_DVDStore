@@ -9,6 +9,7 @@ const bodyParser = require('body-parser')
 const urlencodedParser = bodyParser.urlencoded({ extended: false })
 const storeDB = require("../model/actor.js");
 const cors = require("cors")
+const verify = require("../auth/verify")
 
 app.use(bodyParser.json());
 app.use(urlencodedParser);

@@ -19,12 +19,16 @@ app.use(function (req, res, next) {
 
 app.use(serveStatic(__dirname + "/public"));
 
-app.get("/login", (req, res) => {
-    res.sendFile("/public/login.html", { root: __dirname });
+app.get("/actor", (req, res) => {
+    res.sendFile("/public/actor.html", { root: __dirname });
 });
 
 app.get("/film", (req, res) => {
   res.sendFile("/public/film.html", {root: __dirname});
+})
+
+app.get("/login", (req, res) => {
+  res.sendFile("/public/login.html", {root: __dirname});
 })
 
 app.listen(port, hostname, function () {
