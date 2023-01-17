@@ -25,7 +25,10 @@
                 <a class="nav-link" aria-current="page" href="/actor">Actors!</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" href="/film">Films!</a>
+                <a class="nav-link" href="/film">Films!</a>
+              </li>
+              <li class="nav-item justify-content-end">
+                <a class = "nav-link active" href="/login">Login.</a>
               </li>
             </ul>
           </div>
@@ -33,14 +36,14 @@
       </nav>  
 
       <!-- end of navbar, start of content -->
-    <div class="login-form" id ="fcat-query"> 
-        <form action="", id = "fcat-query">
+    <div class="login-form" id ="staff-login"> 
+        <form action="", id = "staff-login">
             <h2 class="text-center">Welcome to SP DVD!</h2>        
             <div class="form-group"> 
-                <input type="text" class="form-control" id="f_category" placeholder="Username" required="required"> 
+                <input type="text" class="form-control" id="staff_user" placeholder="Username" required="required"> 
             </div>
             <div class="form-group"> 
-              <input type="text" class="form-control" id="f_category" placeholder="Password" required="required"> 
+              <input type="text" class="form-control" id="staff_pwd" placeholder="Password" required="required"> 
             </div>
             <div class="form-group text-center", id = "submit">
                 <button type="submit" class="btn btn-primary">Submit</button>
@@ -48,11 +51,11 @@
         </form>  
     </div> 
     <div class="login-form container" id = "response">
-        <div class = "row" id = "filmresponse"></div>
+        <div class = "row" id = "loginResponse"></div>
     </div>
 
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src = "./javascript/commonFunc.js"></script>
-    <script src ="javascript/film.js"></script>   
+    <script src ="javascript/stafflogin.js"></script>   
 </body>   
 </html>

@@ -394,7 +394,32 @@ var storeDB = {
                 })
         }
         })
-    }}
+    }},
+
+    //endpoint 11
+    staffLogin: (username, password, callback) => {
+        var conn = db.getConnection()
+        conn.connect((err) => {
+            if (err){
+                console.log(err)
+                return callback (err, null)
+            } else {
+                var sql = `SELECT first_name, last_name, staff_id FROM staff WHERE username = ? and password = ?`
+                conn.query(sql, [username, password], (err, res) => {
+                    if(err){
+                        console.log(err)
+                        return callback(err, null)
+                    } else if (res.length == 0){
+                        console.log(`Login details are incorrect`)
+                        return callback (null, 403)
+                    } else {
+                        var user = res[0]
+                        return callback (null, user)
+                    }
+                })
+            }
+        })
+    }
 }
 
 

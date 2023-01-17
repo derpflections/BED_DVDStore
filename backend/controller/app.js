@@ -9,7 +9,8 @@ const bodyParser = require('body-parser')
 const urlencodedParser = bodyParser.urlencoded({ extended: false })
 const storeDB = require("../model/actor.js");
 const cors = require("cors")
-const verify = require("../auth/verify")
+const key = require("../auth/verify")
+const jwt = require("jsonwebtoken")
 
 app.use(bodyParser.json());
 app.use(urlencodedParser);
@@ -178,6 +179,30 @@ app.post("/staff", (req, res) =>{
             res.status(201).json({"insertID":result.insertId.toString()}) //sends successful msg
         }
     })    
+})
+
+//endpoint 11 -> logging in staff
+app.post("/adminLogin", (req, res) => {
+    var username = req.body.username
+    var password = req.body.password
+    storeDB.staffLogin(username, password, (err, result) => {
+        if (err){
+            res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
+        } else if (result == 403){
+            res.status(403).json({"error_msg":"person not verified"})
+        } else {
+            const payload = {staff_id : result.staff_id}
+            jwt.sign(payload, key, {algorithm:"HS256"}, (error, token) => {
+                if (err){
+                    console.log(error)
+                    res.status(401).json({"error":"unauthorized"})
+                } else{
+                    res.status(200).json({token:token, staff_id: result.staff_id, result: result})
+                }
+            })
+            // res.status(201).json(result)
+        }
+    })
 })
 
 
