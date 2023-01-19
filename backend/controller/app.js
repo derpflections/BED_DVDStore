@@ -9,7 +9,8 @@ const bodyParser = require('body-parser')
 const urlencodedParser = bodyParser.urlencoded({ extended: false })
 const storeDB = require("../model/actor.js");
 const cors = require("cors")
-const key = require("../auth/verify")
+const key = require("../config.js")
+const verify = require("../auth/verify.js")
 const jwt = require("jsonwebtoken")
 
 app.use(bodyParser.json());
@@ -202,6 +203,20 @@ app.post("/adminLogin", (req, res) => {
             })
             // res.status(201).json(result)
         }
+    })
+})
+
+//endpoint 12 -> checking staff on login
+app.get("/adminCheck", verify, (req, res) => {
+    var staffid = req.decodedToken.staff_id
+    storeDB.staffVerify(staffid, (err, result) => {
+        if (err){
+            res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
+        } else if (result == 403) {
+            res.status(403).json({"error_msg":"person not verified"})
+        } else {
+            res.status(200).json(result)
+    }
     })
 })
 

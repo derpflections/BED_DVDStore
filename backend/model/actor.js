@@ -413,13 +413,35 @@ var storeDB = {
                         console.log(`Login details are incorrect`)
                         return callback (null, 403)
                     } else {
-                        var user = res[0]
-                        return callback (null, user)
+                        return callback (null, res[0])
                     }
                 })
             }
         })
-    }
+    },
+
+    staffVerify: (staffid, callback) => {
+        var conn = db.getConnection()
+            conn.connect((err) => {
+                if (err){
+                    console.log(err)
+                    return callback (err, null)
+                } else {
+                    var sql = `SELECT first_name, last_name FROM staff WHERE staff_id = ?`
+                    conn.query(sql, [staffid], (err, res) => {
+                        if (err) {
+                            console.log(err)
+                            return callback (err, null)
+                        } else if (res.length == 0){
+                            console.log(`Staff not found.`)
+                            return callback (null, 403)
+                        } else {
+                            return callback(null, res)
+                        }
+                    })
+                }
+            })
+    },
 }
 
 
