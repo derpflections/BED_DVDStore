@@ -427,7 +427,7 @@ var storeDB = {
                     console.log(err)
                     return callback (err, null)
                 } else {
-                    var sql = `SELECT first_name, last_name FROM staff WHERE staff_id = ?`
+                    var sql = `SELECT first_name, last_name, address_id, email, store_id, active, username FROM staff WHERE staff_id = ?`
                     conn.query(sql, [staffid], (err, res) => {
                         if (err) {
                             console.log(err)
@@ -436,7 +436,16 @@ var storeDB = {
                             console.log(`Staff not found.`)
                             return callback (null, 403)
                         } else {
-                            return callback(null, res)
+                            addrID = res[0].address_id
+                            var sql = `SELECT * FROM address WHERE address_id = ?`
+                            conn.query(sql, addrID, (err, res2) => {
+                                if (err){
+                                    return callback (err, null)
+                                } else {
+                                    return callback (null, [res, res2])
+                                }
+                            })
+                            // return callback (null, res)
                         }
                     })
                 }

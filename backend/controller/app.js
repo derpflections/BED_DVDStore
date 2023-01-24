@@ -215,6 +215,7 @@ app.get("/adminCheck", verify, (req, res) => {
         } else if (result == 403) {
             res.status(403).json({"error_msg":"person not verified"})
         } else {
+            console.log(result)
             res.status(200).json(result)
     }
     })

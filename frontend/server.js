@@ -20,17 +20,25 @@ app.use(function (req, res, next) {
 app.use(serveStatic(__dirname + "/public"));
 
 app.get("/actor", (req, res) => {
-    res.sendFile("/public/actor.html", { root: __dirname });
+  res.sendFile("/public/html/actor.html", { root: __dirname });
 });
 
 app.get("/film", (req, res) => {
-  res.sendFile("/public/film.html", {root: __dirname});
+  res.sendFile("/public/html/film.html", { root: __dirname });
 })
 
 app.get("/login", (req, res) => {
-  res.sendFile("/public/login.html", {root: __dirname});
+  res.sendFile("/public/html/login.html", { root: __dirname });
 })
 
-app.listen(port, hostname, function () {
+app.get("/", (req, res) => {
+  res.sendFile("/public/html/index.html", { root: __dirname });
+})
+
+app.get("/2223010", (req, res) => {
+  res.sendFile("/public/html/test.html", { root: __dirname });
+})
+
+app.listen(port, hostname, () => {
   console.log(`Server hosted at http://${hostname}:${port}`);
 });

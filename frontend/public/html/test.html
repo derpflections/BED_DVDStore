@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html> 
 <html data-bs-theme="dark">
 <head> 
     <meta charset="UTF-8"> 
@@ -7,7 +7,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
-    <link href="./css/login.css" rel = "stylesheet">
+    <link href="../css/test.css" rel="stylesheet" />
+    <link href="../css/global.css" rel = "stylesheet">
     <title>SP DVD</title>
 </head>   
 
@@ -15,45 +16,55 @@
     <!-- navbar -->
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-          <a class="navbar-brand" href="#">SP DVD</a>
+          <a class="navbar-brand" href="/">SP DVD</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link active" href="/actor">Actors!</a>
+                <a class="nav-link" aria-current="page" href="/actor">Actors!</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/film">Films!</a>
               </li>
-              <li class="nav-item justify-content-end">
-                <a class = "nav-link" href="/login" id = "login">Login.</a>
+          </div>
+          <div class= "collapse navbar-collapse justify-content-end">
+            <ul class = "navbar-nav mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class = "nav-link active" href="/login" id = "login">Login.</a>
               </li>
             </ul>
           </div>
+            </ul>
         </div>
-      </nav>    
+      </nav>  
 
       <!-- end of navbar, start of content -->
-    <div class="login-form" id ="actor-query"> 
-        <form action="", id = "actor-query">
-            <h2 class="text-center">Look for a actor!</h2>        
+    <div class="login-form" id ="staff-login"> 
+        <form action="", id = "staff-login">
+            <h2 class="text-center">Welcome to SP DVD!</h2>        
+              <select class = "form-select form-select text-center" id = "loginType">
+                <option value = "customer">Customer Login</option>
+                <option value = "staff">Staff Login</option>
+              </select>
             <div class="form-group"> 
-                <input type="text" class="form-control" id="actor_id" placeholder="Actor ID" required="required"> 
+                <input type="text" class="form-control mt-3" id="staff_user" placeholder="Username" required="required"> 
+            </div>
+            <div class="form-group"> 
+              <input type="password" class="form-control mt-3" id="staff_pwd" placeholder="Password" required="required"> 
             </div>
             <div class="form-group text-center", id = "submit">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary mt-2">Submit</button>
             </div>        
         </form>  
     </div> 
-    <div class="login-form" id = "response">
-        
-    </div>
+    <div class = "text-center" id = "loginResponse2"></div>
 
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src = "./javascript/commonFunc.js"></script>
-    <script src ="javascript/login.js"></script>   
-    <script src="javascript/checkLoggedIn.js"></script>
+    <script src = "../javascript/commonFunc.js"></script>
+    <script src ="../javascript/test.js"></script>
+    <script src ="../javascript/stafflogin.js"></script>
+    <!-- <script src="javascript/checkLoggedIn.js"></script> -->
 </body>   
 </html>
