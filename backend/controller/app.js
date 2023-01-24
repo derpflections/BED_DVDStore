@@ -66,10 +66,10 @@ app.put("/actors/:actor_id", (req, res) => {
     var actor_details = req.body
     console.log(actor_details)
     storeDB.updateActor(actor_id, actor_details, (err, result) => {
-        if (err){
+        if (err) {
             res.status(500).json({ "error_msg": "Internal server error" }) //sends error message in json format w/ error 500
         } else if (result == 400) {
-            res.status(400).json({"error_msg":"missing data"}) //sends error message in json format w/ error 400
+            res.status(400).json({ "error_msg": "missing data" }) //sends error message in json format w/ error 400
         } else if (result == 204) {
             res.status(204).send(`No Content. Record of given actor_id cannot be found.`) //sends error message in json format w/ error 204
         } else {
@@ -102,7 +102,7 @@ app.get("/film_categories/:category_id/films", (req, res) => {
             for (i = 0; i < result.length; i++) { //this for loop converts the release_year and duration of the movies into a string.
                 result[i].release_year = result[i].release_year.toString()
                 result[i].duration = result[i].duration.toString()
-            } 
+            }
             res.status(200).json(result) //sends successful msg
         }
     })
@@ -118,68 +118,68 @@ app.get("/customer/:customer_id/payment", (req, res) => {
         if (err) {
             res.status(500).json({ "error_msg": "Internal server error" }) //sends error message in json format w/ error 500
         } else {
-            for (i = 0; i < result.length; i++){ //this for loop adds the result into a variable, and changes it into a string.
+            for (i = 0; i < result.length; i++) { //this for loop adds the result into a variable, and changes it into a string.
                 totalSum += result[i].amount
                 result[i].amount = result[i].amount.toString()
             }
             totalSum = totalSum.toFixed(2) //rounds the variable to 2 decimal points
-            if(result.length == 0){ // if the length of the result is 0, there is no record for the period, hence the sum is 0.
+            if (result.length == 0) { // if the length of the result is 0, there is no record for the period, hence the sum is 0.
                 totalSum = "0"
             }
-            res.status(200).json({"rental": result, "total":totalSum}) //sends successful msg
+            res.status(200).json({ "rental": result, "total": totalSum }) //sends successful msg
         }
     })
 })
 
 //endpoint 8
-app.post("/customers", (req, res) =>{
+app.post("/customers", (req, res) => {
     var details = req.body
     var address = details.address
-    storeDB.postNewCustomer(details, address, (err, result) =>{
-        if (err){
+    storeDB.postNewCustomer(details, address, (err, result) => {
+        if (err) {
             res.status(500).json({ "error_msg": "Internal server error" }) //sends error message in json format w/ error 500
-        }else if (result == 400){
-            res.status(400).json({"error_msg":"missing data"}) //sends error message in json format w/ error 400
-        } else if (result == 1062){
-            res.status(409).send({"error_msg":"email already exist"}) //sends error message in json format w/ error 409
+        } else if (result == 400) {
+            res.status(400).json({ "error_msg": "missing data" }) //sends error message in json format w/ error 400
+        } else if (result == 1062) {
+            res.status(409).send({ "error_msg": "email already exist" }) //sends error message in json format w/ error 409
         } else {
-            res.status(201).json({"customer_id":result.insertId.toString()}) //sends successful msg
+            res.status(201).json({ "customer_id": result.insertId.toString() }) //sends successful msg
         }
     })
 })
 
 //endpoint 9 -> posting new city and country
-app.post("/country", (req, res) =>{
+app.post("/country", (req, res) => {
     var country = req.body.country
     var city = req.body.city
-    storeDB.postNewLocation(country, city, (err, result) =>{
-        if (err){
+    storeDB.postNewLocation(country, city, (err, result) => {
+        if (err) {
             res.status(500).json({ "error_msg": "Internal server error" }) //sends error message in json format w/ error 500
-        } else if (result == 400){
-            res.status(400).json({"error_msg":"Missing Data!"}) //sends error message in json format w/ error 400
-        } else if (result == 409){
-            res.status(409).json({"error_msg":"Geographic location already present in system!"}) //sends error message in json format w/ error 409
+        } else if (result == 400) {
+            res.status(400).json({ "error_msg": "Missing Data!" }) //sends error message in json format w/ error 400
+        } else if (result == 409) {
+            res.status(409).json({ "error_msg": "Geographic location already present in system!" }) //sends error message in json format w/ error 409
         } else {
-            res.status(201).json({"cityID":result[1].toString(), "countryID":result[2].toString()}) //sends successful msg
+            res.status(201).json({ "cityID": result[1].toString(), "countryID": result[2].toString() }) //sends successful msg
         }
     })
 })
 
 //endpoint 10 -> posting new staff
-app.post("/staff", (req, res) =>{
+app.post("/staff", (req, res) => {
     var details = req.body
     var address = details.address
-    storeDB.postNewStaff(details, address, (err, result) =>{
-        if (err){
+    storeDB.postNewStaff(details, address, (err, result) => {
+        if (err) {
             res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
-        } else if (result == 409){
-            res.status(409).send({"error_msg":"Staff's e-mail already present in system!"}) //sends error message in json format w/ error 409
-        } else if (result == 400){
-            res.status(400).json({"error_msg":"Missing Data!"}) //sends error message in json format w/ error 400
+        } else if (result == 409) {
+            res.status(409).send({ "error_msg": "Staff's e-mail already present in system!" }) //sends error message in json format w/ error 409
+        } else if (result == 400) {
+            res.status(400).json({ "error_msg": "Missing Data!" }) //sends error message in json format w/ error 400
         } else {
-            res.status(201).json({"insertID":result.insertId.toString()}) //sends successful msg
+            res.status(201).json({ "insertID": result.insertId.toString() }) //sends successful msg
         }
-    })    
+    })
 })
 
 //endpoint 11 -> logging in staff
@@ -187,18 +187,18 @@ app.post("/adminLogin", (req, res) => {
     var username = req.body.username
     var password = req.body.password
     storeDB.staffLogin(username, password, (err, result) => {
-        if (err){
+        if (err) {
             res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
-        } else if (result == 403){
-            res.status(403).json({"error_msg":"person not verified"})
+        } else if (result == 403) {
+            res.status(403).json({ "error_msg": "person not verified" })
         } else {
-            const payload = {staff_id : result.staff_id}
-            jwt.sign(payload, key, {algorithm:"HS256"}, (error, token) => {
-                if (err){
+            const payload = { staff_id: result.staff_id }
+            jwt.sign(payload, key, { algorithm: "HS256" }, (error, token) => {
+                if (err) {
                     console.log(error)
-                    res.status(401).json({"error":"unauthorized"})
-                } else{
-                    res.status(200).json({token:token, staff_id: result.staff_id, result: result})
+                    res.status(401).json({ "error": "unauthorized" })
+                } else {
+                    res.status(200).json({ token: token, result: result })
                 }
             })
             // res.status(201).json(result)
@@ -206,20 +206,59 @@ app.post("/adminLogin", (req, res) => {
     })
 })
 
-//endpoint 12 -> checking staff on login
+//endpoint 12 -> checking staff on startup
 app.get("/adminCheck", verify, (req, res) => {
     var staffid = req.decodedToken.staff_id
     storeDB.staffVerify(staffid, (err, result) => {
-        if (err){
+        if (err) {
             res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
         } else if (result == 403) {
-            res.status(403).json({"error_msg":"person not verified"})
+            res.status(403).json({ "error_msg": "person not verified" })
         } else {
             console.log(result)
             res.status(200).json(result)
-    }
+        }
     })
 })
+
+//endpoint 13 -> logging in customer
+app.post("/custLogin", (req, res) => {
+    var email = req.body.email
+    var password = req.body.password
+    storeDB.custLogin(email, password, (err, result) => {
+        if (err) {
+            res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
+        } else if (result == 403) {
+            res.status(403).json({ "error_msg": "person not verified" })
+        } else {
+            console.log(result)
+            const payload = { customer_id: result.customer_id }
+            jwt.sign(payload, key, { algorithm: "HS256" }, (error, token) => {
+                if (err) {
+                    console.log(error)
+                    res.status(401).json({ "error": "unauthorized" })
+                } else {
+                    res.status(200).json({ token: token, result: result })
+                }
+        })
+    }})
+})
+
+app.get("/custCheck", verify, (req, res) => {
+    var customer_id = req.decodedToken.customer_id
+    storeDB.custVerify(customer_id, (err, result) => {
+        if (err) {
+            console.log(err)
+            res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
+        } else if (result == 403) {
+            res.status(403).json({ "error_msg": "person not verified" })
+        } else {
+            console.log(result)
+            res.status(200).json(result)
+        }
+    })
+})
+
 
 
 
