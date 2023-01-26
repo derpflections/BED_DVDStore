@@ -1,28 +1,26 @@
 const baseUrl = "http://localhost:3000"
 
 $("#fcat-query").submit((event) =>{
-
     event.preventDefault();
     const reqBody = {
-        queryID: $("#categorySelection").val()
+        category: $("#categorySelection").val(),
+        rating: $("#ratingSelection").val(),
+        price: $("#priceLimit").val().replace("$", ""),
+        title: $("#filmTitle").val()
     }
-    console.log($("#categorySelection").val)
-    const categoryID = reqBody.queryID
-    axios.get(`${baseUrl}/film_categories/${categoryID}/films`)
+    axios.post(`${baseUrl}/filmSearch`, reqBody)
         .then((response) => {
-            console.log(response)
+            console.log(response.status)
             if(response.status == 204) {
                 document.getElementById("filmresponse").innerHTML = ``
-                htmlData = `<p>Actor not found!</p>`
+                htmlData = `<p class = "text-center h4">No films found!</p>`
+                $("#filmresponse").append(htmlData)
             } else {
                 document.getElementById("filmresponse").innerHTML = ``
                 resp = response.data
-                console.log(resp)
                 queryCat = resp[0].name
                 htmlData = ``
-                headCat = `<div class="text-center" id = "queryCat">Category: ${queryCat}</div>`
                 filmNo = 0
-                $("#filmresponse").append(headCat)
                 resp.forEach((film) => {
                 htmlData += `
                 <div class = "col-md-6" id = "film${film.film_id} n${filmNo}">
@@ -64,7 +62,6 @@ $("#fcat-query").submit((event) =>{
 $("#fcat-query").ready(() => {
     axios.get(`${baseUrl}/filmCat`)
         .then((response) => {
-            console.log(response)
             resp = response.data
             resp.forEach((category) => {
                 $("#categorySelection").append(`<option value = ${category.category_id}>${category.name}</option>`)
@@ -75,7 +72,6 @@ $("#fcat-query").ready(() => {
         })
     axios.get(`${baseUrl}/filmRating`)
       .then((response) => {
-        console.log(response)
         resp = response.data
         resp.forEach((rating) => {
           $("#ratingSelection").append(`<option value = ${rating.rating}>${rating.rating}</option>`)

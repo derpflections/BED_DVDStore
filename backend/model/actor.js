@@ -550,6 +550,51 @@ var storeDB = {
                 })
             }
         })
+    },
+
+    filmSearch: (category, rating, title, price, callback) => {
+        var conn = db.getConnection()
+        conn.connect((err) => {
+            if (err){
+                console.log(err)
+                return callback (err, null)
+            } else {
+                var sql = `SELECT f.film_id, f.title, cat.name, f.rating, f.release_year, f.rental_rate, f.length as duration FROM film f, film_category fc, category cat WHERE f.film_id = fc.film_id AND fc.category_id = cat.category_id `
+                sqlArray = []
+                if (category != "empty"){
+                    sql += `AND cat.category_id = ? `
+                    sqlArray.push(category)
+                }
+                if (rating != "empty") {
+                    sql += `AND f.rating = ? `
+                    sqlArray.push(rating)
+                }
+                if (title != "") {
+                    searchTerm = "\'%"
+                    searchTerm += `${title}`
+                    sql += `AND f.title LIKE ${searchTerm}%\'`
+                    sqlArray.push(title)
+                }
+                if (price != ""){
+                    sql += `AND f.rental_rate <= ? `
+                    sqlArray.push(price)
+                }
+                sql += `ORDER BY f.film_id`
+                console.log(price != "")
+                console.log(sqlArray)
+                console.log(sql)
+                conn.query(sql, sqlArray, (err, res) => {
+                    if (err){
+                        console.log(err)
+                        return callback (err, null)
+                    } else if (res.length == 0){
+                        return callback (err, 204)
+                    } else {
+                        return callback (null, res)
+                    }
+                }) 
+            }
+        })
     }
 }
 

@@ -280,5 +280,24 @@ app.get("/filmRating", (req, res) => {
     })
 })
 
+//endpoint 17 -> gets films based on criteria
+app.post("/filmSearch", (req, res) => {
+    var category = req.body.category
+    var rating = req.body.rating
+    var title = req.body.title
+    var price = req.body.price
+    // console.log(req.body.category)
+    storeDB.filmSearch(category, rating, title, price, (err, result) => {
+        if (err){
+            res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
+        } else if (result == 204){
+            res.status(204).json({"error_msg":"no movies found"})
+        } else {
+            res.status(200).json(result)
+        }
+    })
+})
+
+
 
 module.exports = app
