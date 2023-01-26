@@ -14,7 +14,7 @@
 
 <body onload = onLogin()>   
     <!-- navbar -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
       <div class="container-fluid">
         <a class="navbar-brand" href="/">SP DVD</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,7 +29,7 @@
               <a class="nav-link" href="/film">Films!</a>
             </li>
         </div>
-        <div class= "collapse navbar-collapse justify-content-end">
+        <div class= "collapse navbar-collapse justify-content-end" id = "navbarSupportedContent">
           <ul class = "navbar-nav mb-2 mb-lg-0">
             <li class="nav-item">
               <a class = "nav-link active" href="/login" id = "login">Login.</a>
@@ -41,11 +41,22 @@
     </nav>  
 
       <!-- end of navbar, start of content -->
-    <div class="login-form" id ="fcat-query"> 
+    <div class="login-form col-md-8" id ="fcat-query"> 
         <form action="", id = "fcat-query">
             <h2 class="text-center">Look for a category of films!</h2>        
             <div class="form-group"> 
-                <input type="text" class="form-control" id="f_category" placeholder="Film Category" required="required"> 
+              <div class = "filmFilter">
+                <span>Select your category here:</span>
+                <select class = "form-select" id = "categorySelection">
+                  <option value = "empty">All Categories.</option>
+                </select>
+              </div>
+              <div class= "filmFilter pt-2">
+                <div>Select your rating here:</div>
+                <select class = "form-select" id = "ratingSelection">
+                  <option value = "empty">All Ratings.</option>
+                </select>
+              </div>
             </div>
             <div class="form-group text-center", id = "submit">
                 <button type="submit" class="btn btn-primary">Submit</button>

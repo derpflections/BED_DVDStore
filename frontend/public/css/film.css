@@ -1,7 +1,6 @@
 @charset "utf-8";
 
 .login-form {
-    width: 500px;
     margin: 50px auto;
 }
 .login-form form {
@@ -23,7 +22,6 @@
 }
 
 #response {
-    width: 900px;
     margin: 50px auto;
 }
 #response {

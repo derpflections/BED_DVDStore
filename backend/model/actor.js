@@ -172,7 +172,7 @@ var storeDB = {
                 return callback(err, null) //returns null if error is present.
             } else {
                 console.log(`Connected to database!`)
-                var sql = `SELECT f.film_id, f.title, cat.name, f.rating, f.release_year, f.length as duration FROM film f, film_category fc, category cat WHERE f.film_id = fc.film_id AND fc.category_id = cat.category_id AND cat.category_id = ? ORDER BY film_id `
+                var sql = `SELECT f.film_id, f.title, cat.name, f.rating, f.release_year, f.rental_rate, f.length as duration FROM film f, film_category fc, category cat WHERE f.film_id = fc.film_id AND fc.category_id = cat.category_id AND cat.category_id = ? ORDER BY film_id `
                 conn.query(sql, category_id, (err, res) => {
                     conn.end()
                     if (err) {
@@ -398,7 +398,7 @@ var storeDB = {
         }
     },
 
-    //endpoint 11
+    //endpoint 11 -> logs staff in 
     staffLogin: (username, password, callback) => {
         var conn = db.getConnection()
         conn.connect((err) => {
@@ -422,7 +422,7 @@ var storeDB = {
         })
     },
 
-    //endpoint 12
+    //endpoint 12 -> checks if staff login in valid
     staffVerify: (staffid, callback) => {
         var conn = db.getConnection()
         conn.connect((err) => {
@@ -455,7 +455,7 @@ var storeDB = {
         })
     },
 
-    //endpoint 13
+    //endpoint 13 -> logs customer in
     custLogin: (email, password, callback) => {
         var conn = db.getConnection()
         conn.connect((err) => {
@@ -478,7 +478,7 @@ var storeDB = {
         })
     },
 
-    //endpoint 14
+    //endpoint 14 -> checks if customer login in valid 
     custVerify: (customerid, callback) => {
         var conn = db.getConnection()
         conn.connect((err) => {
@@ -504,6 +504,48 @@ var storeDB = {
                                 return callback (err, [res, res2])
                             }
                         })
+                    }
+                })
+            }
+        })
+    },
+
+    //endpoint 15 -> checks for category of films
+    filmCatList: (callback) => {
+        var conn = db.getConnection()
+        conn.connect((err) => {
+            if (err){
+                console.log(err)
+                return callback (err, null)
+            } else {
+                var sql = `SELECT category_id, name FROM category`
+                conn.query(sql, (err, res) => {
+                    if (err){
+                        console.log(err)
+                        return callback (err, null)
+                    } else {
+                        return callback (null, res)
+                    }
+                })
+            }
+        })
+    },
+
+    //endpoint 16 -> gets distinct list of ratings
+    filmRatingList: (callback) => {
+        var conn = db.getConnection()
+        conn.connect((err) => {
+            if (err){
+                console.log(err)
+                return callback (err, null)
+            } else {
+                var sql = `SELECT DISTINCT rating FROM film ORDER BY rating;`
+                conn.query(sql, (err, res) => {
+                    if (err){
+                        console.log(err)
+                        return callback (err, null)
+                    } else {
+                        return callback (null, res)
                     }
                 })
             }

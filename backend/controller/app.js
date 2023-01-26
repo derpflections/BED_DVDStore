@@ -215,7 +215,6 @@ app.get("/adminCheck", verify, (req, res) => {
         } else if (result == 403) {
             res.status(403).json({ "error_msg": "person not verified" })
         } else {
-            console.log(result)
             res.status(200).json(result)
         }
     })
@@ -240,27 +239,46 @@ app.post("/custLogin", (req, res) => {
                 } else {
                     res.status(200).json({ token: token, result: result })
                 }
-        })
-    }})
+            })
+        }
+    })
 })
 
+//endpoint 14 -> checks if customer login is valid
 app.get("/custCheck", verify, (req, res) => {
     var customer_id = req.decodedToken.customer_id
     storeDB.custVerify(customer_id, (err, result) => {
         if (err) {
-            console.log(err)
             res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
         } else if (result == 403) {
             res.status(403).json({ "error_msg": "person not verified" })
         } else {
-            console.log(result)
             res.status(200).json(result)
         }
     })
 })
 
+//endpoint 15 -> checks for category of films
+app.get("/filmCat", (req, res) => {
+    storeDB.filmCatList((err, result) => {
+        if (err){
+            res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
+        } else {
+            res.status(200).json(result)
+        }
+    })
+})
 
-
+//endpoint 16 -> gets distinct list of ratings
+app.get("/filmRating", (req, res) => {
+    storeDB.filmRatingList((err, result) => {
+        if (err){
+            res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
+        } else {
+            res.status(200).json(result)
+        }
+    })
+})
 
 
 module.exports = app
