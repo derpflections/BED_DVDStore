@@ -16,5 +16,22 @@ var commonFunction = {
     }
     properString = properString.slice(0, properString.length - 1)
     return properString
+    },
+
+    hourCalculator: (minString) => {
+        noHours = Math.floor(minString / 60)
+        noMinutes = (minString - (noHours * 60))
+        output = ''
+        if (minString < 60) {
+            output = `${noMinutes} minutes`
+        } else if (noHours > 0 && noHours < 2){
+            output = `${noHours} hour, ${noMinutes} minutes`
+        } else {
+            output = `${noHours} hours, ${noMinutes} minutes`
+        }
+        return output
     }
 }
+
+
+

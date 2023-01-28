@@ -408,6 +408,7 @@ var storeDB = {
             } else {
                 var sql = `SELECT first_name, last_name, staff_id FROM staff WHERE username = ? and password = ?`
                 conn.query(sql, [username, password], (err, res) => {
+                    conn.end()
                     if (err) {
                         console.log(err)
                         return callback(err, null)
@@ -442,7 +443,9 @@ var storeDB = {
                         addrID = res[0].address_id
                         var sql = `SELECT * FROM address WHERE address_id = ?`
                         conn.query(sql, addrID, (err, res2) => {
+                            conn.end()
                             if (err) {
+                                console.log(err)
                                 return callback(err, null)
                             } else {
                                 return callback(null, [res, res2])
@@ -465,7 +468,9 @@ var storeDB = {
             } else {
                 var sql = `SELECT customer_id, first_name, last_name FROM customer WHERE email = ? AND password = ?`
                 conn.query(sql, [email, password], (err, res) => {
+                    conn.end()
                     if (err) {
+                        console.log(err)
                         return callback(err, null)
                     } else if (res.length == 0) {
                         console.log(`Login details are incorrect!`)
@@ -498,10 +503,11 @@ var storeDB = {
                         addrID = res[0].address_id
                         var sql = `SELECT * FROM address where address_id = ?`
                         conn.query(sql, addrID, (err, res2) => {
-                            if (err){
-                                return callback (err, null)
+                            conn.end()
+                            if (err) {
+                                return callback(err, null)
                             } else {
-                                return callback (err, [res, res2])
+                                return callback(err, [res, res2])
                             }
                         })
                     }
@@ -514,17 +520,18 @@ var storeDB = {
     filmCatList: (callback) => {
         var conn = db.getConnection()
         conn.connect((err) => {
-            if (err){
+            if (err) {
                 console.log(err)
-                return callback (err, null)
+                return callback(err, null)
             } else {
                 var sql = `SELECT category_id, name FROM category`
                 conn.query(sql, (err, res) => {
-                    if (err){
+                    conn.end()
+                    if (err) {
                         console.log(err)
-                        return callback (err, null)
+                        return callback(err, null)
                     } else {
-                        return callback (null, res)
+                        return callback(null, res)
                     }
                 })
             }
@@ -535,33 +542,35 @@ var storeDB = {
     filmRatingList: (callback) => {
         var conn = db.getConnection()
         conn.connect((err) => {
-            if (err){
+            if (err) {
                 console.log(err)
-                return callback (err, null)
+                return callback(err, null)
             } else {
                 var sql = `SELECT DISTINCT rating FROM film ORDER BY rating;`
                 conn.query(sql, (err, res) => {
-                    if (err){
+                    conn.end()
+                    if (err) {
                         console.log(err)
-                        return callback (err, null)
+                        return callback(err, null)
                     } else {
-                        return callback (null, res)
+                        return callback(null, res)
                     }
                 })
             }
         })
     },
 
+    //endpoint 17 -> gets films based on criteria
     filmSearch: (category, rating, title, price, callback) => {
         var conn = db.getConnection()
         conn.connect((err) => {
-            if (err){
+            if (err) {
                 console.log(err)
-                return callback (err, null)
+                return callback(err, null)
             } else {
                 var sql = `SELECT f.film_id, f.title, cat.name, f.rating, f.release_year, f.rental_rate, f.length as duration FROM film f, film_category fc, category cat WHERE f.film_id = fc.film_id AND fc.category_id = cat.category_id `
                 sqlArray = []
-                if (category != "empty"){
+                if (category != "empty") {
                     sql += `AND cat.category_id = ? `
                     sqlArray.push(category)
                 }
@@ -575,7 +584,7 @@ var storeDB = {
                     sql += `AND f.title LIKE ${searchTerm}%\'`
                     sqlArray.push(title)
                 }
-                if (price != ""){
+                if (price != "") {
                     sql += `AND f.rental_rate <= ? `
                     sqlArray.push(price)
                 }
@@ -584,15 +593,38 @@ var storeDB = {
                 console.log(sqlArray)
                 console.log(sql)
                 conn.query(sql, sqlArray, (err, res) => {
-                    if (err){
+                    conn.end()
+                    if (err) {
+                        console.log(err)
+                        return callback(err, null)
+                    } else if (res.length == 0) {
+                        return callback(err, 204)
+                    } else {
+                        return callback(null, res)
+                    }
+                })
+            }
+        })
+    },
+
+    //endpoint 18 -> get all film details based on id 
+    getFilmDetails: (id, callback) => {
+        var conn = db.getConnection()
+        conn.connect((err) => {
+            if (err) {
+                console.log(err)
+                return callback (err, null)
+            } else {
+                sql = `SELECT f.film_id, f.title, f.description, f.release_year, f.rental_rate, f.length, f.rating, f.special_features, l.name FROM film f, language l WHERE f.language_id =  l.language_id AND f.film_id = ?;SELECT a.first_name, a.last_name FROM film_actor fa, actor a WHERE fa.actor_id = a.actor_id AND fa.film_id = ?;SELECT i.inventory_id, i.film_id, i.store_id, f.rental_rate, a.address FROM inventory i, film f, store s, address a WHERE i.film_id = f.film_id AND i.store_id = s.store_id AND s.address_id = a.address_id AND f.film_id = ?`
+                conn.query(sql, [id, id, id], (err, res) => {
+                    conn.end()
+                    if (err) {
                         console.log(err)
                         return callback (err, null)
-                    } else if (res.length == 0){
-                        return callback (err, 204)
                     } else {
                         return callback (null, res)
                     }
-                }) 
+                })
             }
         })
     }

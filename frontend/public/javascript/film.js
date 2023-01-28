@@ -18,12 +18,12 @@ $("#fcat-query").submit((event) =>{
             } else {
                 document.getElementById("filmresponse").innerHTML = ``
                 resp = response.data
+                $("#filmresponse").append(`<div class = "text-center h3" id = "filmQty">${resp.length} films found!</div>`)
                 queryCat = resp[0].name
                 htmlData = ``
-                filmNo = 0
                 resp.forEach((film) => {
                 htmlData += `
-                <div class = "col-md-6" id = "film${film.film_id} n${filmNo}">
+                <div class = "col-md-6 filmTable" id = "film${film.film_id}" film_id = ${film.film_id} onclick = clickFilm(film${film.film_id})>
                     <table class="table">
                     <tbody>
                       <tr>
@@ -44,12 +44,11 @@ $("#fcat-query").submit((event) =>{
                       </tr>
                       <tr>
                         <td>Film's Duration:</td>
-                        <td>${film.duration}</td>
+                        <td>${commonFunction.hourCalculator(film.duration)}</td>
                       </tr>
                     </tbody>
                     </table>
                     </div>`
-                    filmNo++
                 })
                 $("#filmresponse").append(htmlData)
             }
@@ -78,3 +77,10 @@ $("#fcat-query").ready(() => {
         })
       })
 })
+
+
+function clickFilm (emitter) {
+  console.log(emitter.id.replace("film", ""))
+  localStorage.setItem("clickItem", emitter.id.replace("film",""))
+  window.location.assign('/filmDetails')
+}

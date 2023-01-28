@@ -35,9 +35,15 @@ app.get("/", (req, res) => {
   res.sendFile("/public/html/index.html", { root: __dirname });
 })
 
+app.get("/filmDetails", (req, res) => {
+  res.sendFile("/public/html/movie.html", { root: __dirname });
+})
+
 app.get("/2223010", (req, res) => {
   res.sendFile("/public/html/test.html", { root: __dirname });
 })
+
+
 
 app.listen(port, hostname, () => {
   console.log(`Server hosted at http://${hostname}:${port}`);

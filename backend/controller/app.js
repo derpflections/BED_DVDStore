@@ -298,6 +298,16 @@ app.post("/filmSearch", (req, res) => {
     })
 })
 
+app.get("/filmGet/:film_id", (req, res) => {
+    var id = req.params.film_id
+    storeDB.getFilmDetails(id, (err, result) => {
+        if (err){
+            res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
+        } else {
+            res.status(200).json(result)
+        }
+    })
+})
 
 
 module.exports = app
