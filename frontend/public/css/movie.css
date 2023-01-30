@@ -1,0 +1,19 @@
+@charset "utf-8";
+
+td.actorHighlight{
+    transition: all 0.08s linear;
+}
+
+td.actorHighlight:hover {
+    transform: translate(-10px, -10px);
+    box-shadow:10px 10px #777777;
+    background-color: #ADB5BD;
+}
+
+td.actorHighlight:hover{
+    color: black;
+}
+
+td.actorHighlight:active {
+    background-color: #797d82;
+}

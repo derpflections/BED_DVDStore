@@ -49,7 +49,7 @@
 }
 
 div.filmTable{
-    transition: all 0.15s linear;
+    transition: all 0.08s linear;
 }
 
 div.filmTable:hover {

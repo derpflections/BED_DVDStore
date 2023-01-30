@@ -589,9 +589,6 @@ var storeDB = {
                     sqlArray.push(price)
                 }
                 sql += `ORDER BY f.film_id`
-                console.log(price != "")
-                console.log(sqlArray)
-                console.log(sql)
                 conn.query(sql, sqlArray, (err, res) => {
                     conn.end()
                     if (err) {
@@ -615,7 +612,7 @@ var storeDB = {
                 console.log(err)
                 return callback (err, null)
             } else {
-                sql = `SELECT f.film_id, f.title, f.description, f.release_year, f.rental_rate, f.length, f.rating, f.special_features, l.name FROM film f, language l WHERE f.language_id =  l.language_id AND f.film_id = ?;SELECT a.first_name, a.last_name FROM film_actor fa, actor a WHERE fa.actor_id = a.actor_id AND fa.film_id = ?;SELECT i.inventory_id, i.film_id, i.store_id, f.rental_rate, a.address FROM inventory i, film f, store s, address a WHERE i.film_id = f.film_id AND i.store_id = s.store_id AND s.address_id = a.address_id AND f.film_id = ?`
+                sql = `SELECT f.film_id, f.title, f.description, f.release_year, f.rental_rate, f.length, f.rating, f.special_features, l.name as language, c.name as category FROM film f, language l, film_category fc, category c WHERE f.language_id =  l.language_id AND f.film_id = fc.film_id AND c.category_id = fc.category_id AND f.film_id = ?;SELECT a.actor_id, a.first_name, a.last_name FROM film_actor fa, actor a WHERE fa.actor_id = a.actor_id AND fa.film_id = ?;SELECT i.inventory_id, i.film_id, i.store_id, f.rental_rate, a.address FROM inventory i, film f, store s, address a WHERE i.film_id = f.film_id AND i.store_id = s.store_id AND s.address_id = a.address_id AND f.film_id = ?`
                 conn.query(sql, [id, id, id], (err, res) => {
                     conn.end()
                     if (err) {
@@ -623,6 +620,28 @@ var storeDB = {
                         return callback (err, null)
                     } else {
                         return callback (null, res)
+                    }
+                })
+            }
+        })
+    },
+
+    //endpoint 19 -> gets films that actor has acted in 
+    getActorFilms: (id, callback) => {
+        var conn = db.getConnection()
+        conn.connect((err) => {
+            if (err) {
+                console.log(err)
+                return callback (err, null)
+            } else {
+                sql = `SELECT f.film_id, f.title, f.length, f.rating, f.rental_rate, a.first_name, a.last_name FROM film f, film_actor fa, actor a WHERE f.film_id = fa.film_id AND fa.actor_id = a.actor_id AND fa.actor_id = ?;SELECT * FROM actor WHERE actor_id = ?`
+                conn.query(sql, [id, id] ,(err, res) => {
+                    conn.end()
+                    if (err) {
+                        console.err(err)
+                        return callback (err, null)
+                    } else {
+                        return callback(null, res)
                     }
                 })
             }

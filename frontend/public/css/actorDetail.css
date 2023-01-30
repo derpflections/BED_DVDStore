@@ -1,0 +1,19 @@
+@charset "utf-8";
+
+div.actorFilms{
+    transition: all 0.08s linear;
+}
+
+div.actorFilms:hover {
+    transform: translate(-5px, -5px);
+    box-shadow:5px 5px #777777;
+    background-color: #ADB5BD;
+}
+
+div.actorFilms:hover{
+    color: black;
+}
+
+div.actorFilms:active {
+    background-color: #797d82;
+}

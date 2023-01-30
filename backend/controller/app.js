@@ -298,6 +298,7 @@ app.post("/filmSearch", (req, res) => {
     })
 })
 
+//endpoint 18 -> get all film details based on id 
 app.get("/filmGet/:film_id", (req, res) => {
     var id = req.params.film_id
     storeDB.getFilmDetails(id, (err, result) => {
@@ -308,6 +309,19 @@ app.get("/filmGet/:film_id", (req, res) => {
         }
     })
 })
+
+//endpoint 19 -> gets films that actor has acted in 
+app.get("/getActor/:actor_id", (req, res) =>{
+    var id = req.params.actor_id
+    storeDB.getActorFilms(id, (err, result) => {
+        if (err){
+            res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
+        } else {
+            res.status(200).json(result)
+        }
+    })
+})
+
 
 
 module.exports = app

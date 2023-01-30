@@ -31,7 +31,11 @@ $("#fcat-query").submit((event) =>{
                         <td>${commonFunction.multiStringCapitalize(film.title)}</td>
                       </tr>
                       <tr>
-                        <td>Film Rating:</td>
+                      <td>Film's Category:</td>
+                      <td>${film.name}</td>
+                      </tr>
+                      <tr>
+                        <td>Film's Rating:</td>
                         <td>${film.rating}</td>
                       </tr>
                       <tr>
@@ -75,6 +79,9 @@ $("#fcat-query").ready(() => {
         resp.forEach((rating) => {
           $("#ratingSelection").append(`<option value = ${rating.rating}>${rating.rating}</option>`)
         })
+      })
+      .catch((error) => {
+        console.log(error)
       })
 })
 

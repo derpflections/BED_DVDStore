@@ -39,9 +39,19 @@ app.get("/filmDetails", (req, res) => {
   res.sendFile("/public/html/movie.html", { root: __dirname });
 })
 
+app.get("/actorDetails", (req, res) => {
+  res.sendFile("/public/html/actorDetail.html", { root: __dirname });
+})
+
+app.get("/admin", (req, res) => {
+  res.sendFile("/public/html/admin.html", { root: __dirname });
+})
+
+
 app.get("/2223010", (req, res) => {
   res.sendFile("/public/html/test.html", { root: __dirname });
 })
+
 
 
 
