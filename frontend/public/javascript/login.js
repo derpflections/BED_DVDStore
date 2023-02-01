@@ -66,4 +66,10 @@ $("#site-login").submit((event) => {
 function logout() {
     localStorage.clear()
     location.reload()
-}       
+}
+
+function clickAcc (emitter) {
+    console.log(emitter.id.replace("acc", ""))
+    localStorage.setItem("accClickItem", emitter.id.replace("acc",""))
+    window.location.assign('/admin')
+}

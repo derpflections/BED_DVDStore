@@ -14,32 +14,31 @@
 
 <body onload = onLogin()>   
     <!-- navbar -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="/">SP DVD</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="/actor">Actors!</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/film">Films!</a>
-              </li>
-          </div>
-          <div class= "collapse navbar-collapse justify-content-end">
-            <ul class = "navbar-nav mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class = "nav-link active" href="/login" id = "login">Login.</a>
-              </li>
-            </ul>
-          </div>
-            </ul>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">SP DVD</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="/actor">Actors!</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/film">Films!</a>
+            </li>
         </div>
-      </nav>  
-
+        <div class= "collapse navbar-collapse justify-content-end" id = "navbarSupportedContent">
+          <ul class = "navbar-nav mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class = "nav-link active" href="/login" id = "login">Login.</a>
+            </li>
+          </ul>
+        </div>
+          </ul>
+      </div>
+    </nav>  
       <!-- end of navbar, start of content -->
     <div class="login-form" id ="site-login"> 
         <form action="", id = "staff-login">
@@ -64,7 +63,7 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src = "../javascript/commonFunc.js"></script>
     <!-- <script src ="../javascript/test.js"></script> -->
-    <script src ="../javascript/stafflogin.js"></script>
-    <script src="javascript/checkLoggedIn.js"></script>
+    <script src ="../javascript/login.js"></script>
+    <script src="../javascript/checkLoggedIn.js"></script>
 </body>   
 </html>
