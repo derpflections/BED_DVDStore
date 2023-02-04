@@ -1,7 +1,6 @@
 //Name: Lee Hong Yi
 //Admin Number: 2223010
 //Class: DAAA/FT/1B/05
-
 var db = require("./databaseConfig.js")
 
 function bodyChecker(var1, var2) { //used in endpoint 3 to check for missing data
@@ -211,49 +210,51 @@ var storeDB = {
 
     //endpoint 8
     postNewCustomer: (details, address, callback) => {
-        if (details.store_id == "" || details.first_name == "" || details.last_name == "" || details.email == "" || address.address_line1 == "" || address.district == "" || address.city_id == "" || address.postal_code == "" || address.phone == "" || details.store_id == undefined || details.first_name == undefined || details.last_name == undefined || details.email == undefined || address.address_line1 == undefined || address.district == undefined || address.city_id == undefined || address.postal_code == undefined || address.phone == undefined) {
-            console.log(`Missing data!`)
-            return callback(null, 400) //sends error code 400 back to app.js if data is missing.
+        if (details.first_name == undefined || details.last_name == undefined || details.store_id == undefined || address.address_line1 == undefined || address.district == undefined || address.city_id == undefined || address.phone == undefined || details.first_name == "" || details.last_name == "" || details.store_id == "" || address.address_line1 == "" || address.district == "" || address.city_id == "" || address.phone == "") {
+            console.log(`Missing data!`) //this clause checks if there is any missing data.
+            return callback(null, 400)
         } else {
             var conn = db.getConnection()
             conn.connect((err) => { //established connection with database.
                 if (err) {
                     console.log(err)
                     return callback(err, null) //returns null if error is present.
-                } else {
-                    console.log(`Connected to database!`)
-                    var sql = `SELECT * FROM customer WHERE email = ? ; SELECT * FROM city WHERE city_id = ?`
-                    conn.query(sql, [details.email, address.city_id], (err, res) => { // this query checks if the email is already present in the system.
+                } else {                    
+                    var sql = `SELECT * FROM address WHERE address = ? AND address2 = ? AND district = ? AND city_id = ? AND postal_code = ? AND phone = ?` //this query checks if the address is already present in the database.
+                    conn.query(sql, [address.address_line1, address.address_line2, address.district, address.city_id, address.postal_code, address.phone], (err, res) => {
                         if (err) {
                             console.log(err)
                             return callback(err, null) //returns null if error is present.
-                        } else if (res[0].length != 0) { // this executes if the customer email is already present in the database.
-                            console.log(`Duplicate email detected!`)
-                            return callback(null, 1062)
-                        } else if (res[1].length == 0) { // this executs if the city is not present in database.
-                            console.log(`City ID does not exist in database!`)
-                            return callback(null, 400)
-                        } else {
-                            var sql = `INSERT INTO address (address, address2, district, city_id, postal_code, phone) VALUES (?,?,?,?,?,?)` // this query inserts address into the system
-                            conn.query(sql, [address.address_line1, address.address_line2, address.district, address.city_id, address.postal_code, address.phone], (err, res) => {
+                        } else if (res.length == 0) { //this statement executes if the address is NOT present in the system.
+                                sql = `INSERT INTO address (address, address2, district, city_id, postal_code, phone) VALUES (?, ?, ?, ?, ?, ?)` //this query adds the address to the database.
+                                conn.query(sql, [address.address_line1, address.address_line2, address.district, address.city_id, address.postal_code, address.phone], (err, res) => {
+                                    newAddressId = res.insertId //stores the added address id.
+                                    if (err) {
+                                        console.log(err)
+                                        return callback(err, null) //returns null if error is present.
+                                    } else {
+                                        var sql = `UPDATE customer SET store_id = ?, first_name = ?, last_name = ?, address_id = ?, password = ?`
+                                        conn.query(sql, [details.store_id, details.first_name, details.last_name, newAddressId, details.password], (err, res) => {
+                                            conn.end()
+                                            if (err) {
+                                                console.log(err)
+                                                return callback(err, null) //returns null if error is present.
+                                            } else {
+                                                return callback(null, res) // sends response back to the front end
+                                            }
+                                        })
+                                    }
+                            }) 
+                    } else { //this statement executs if the address is present in the system
+                            var sql = `UPDATE customer SET store_id = ?, first_name = ?, last_name = ? , address_id = ?, password = ?`
+                            var addressId = res[0].address_id
+                            conn.query(sql, [details.store_id, details.first_name, details.last_name, addressId,details.password], (err, res) => {
+                                conn.end()
                                 if (err) {
                                     console.log(err)
                                     return callback(err, null) //returns null if error is present.
                                 } else {
-                                    newAddrId = res.insertId //takes address id for the next query
-                                    var sql = `INSERT INTO customer (store_id, first_name, last_name, email, address_id) VALUES (?,?,?,?,?)` //this query inserts the customer details into the system.
-                                    conn.query(sql, [details.store_id, details.first_name, details.last_name, details.email, newAddrId], (err, res) => {
-                                        conn.end()
-                                        if (err) {
-                                            if (err.errno == 1062) { //this clause executes if the email is already present in the system. (second layer of detection)
-                                                return callback(null, 1062) //returns error w/ code 1062.
-                                            } else {
-                                                return callback(err, null) //returns null if error is present.
-                                            }
-                                        } else {
-                                            return callback(null, res) // sends response back to the front end
-                                        }
-                                    })
+                                    return callback(null, res) // sends response back to the front end
                                 }
                             })
                         }
@@ -329,9 +330,11 @@ var storeDB = {
         }
     },
 
-    //endpoint 10 -> posting new staff into database
+    //endpoint 10 -> updating staff into database
     postNewStaff: (details, address, callback) => {
-        if (details.first_name == undefined || details.last_name == undefined || details.store_id == undefined || details.active == undefined || details.username == undefined || address.address_line1 == undefined || address.district == undefined || address.city_id == undefined || address.phone == undefined || details.first_name == "" || details.last_name == "" || details.store_id == "" || details.active == "" || details.username == "" || address.address_line1 == "" || address.district == "" || address.city_id == "" || address.phone == "") {
+        console.log(details)
+        console.log(address)
+        if (details.first_name == undefined || details.last_name == undefined || details.store_id == undefined || address.address_line1 == undefined || address.district == undefined || address.city_id == undefined || address.phone == undefined || details.first_name == "" || details.last_name == "" || details.store_id == "" || address.address_line1 == "" || address.district == "" || address.city_id == "" || address.phone == "") {
             console.log(`Missing data!`) //this clause checks if there is any missing data.
             return callback(null, 400)
         } else {
@@ -340,46 +343,22 @@ var storeDB = {
                 if (err) {
                     console.log(err)
                     return callback(err, null) //returns null if error is present.
-                } else {
-                    var sql = `SELECT * FROM staff WHERE email = ? `
-                    conn.query(sql, [details.email], (err, res) => { //this query checks if the staff email is already present in the system.
+                } else {                    
+                    var sql = `SELECT * FROM address WHERE address = ? AND address2 = ? AND district = ? AND city_id = ? AND postal_code = ? AND phone = ?` //this query checks if the address is already present in the database.
+                    conn.query(sql, [address.address_line1, address.address_line2, address.district, address.city_id, address.postal_code, address.phone], (err, res) => {
                         if (err) {
                             console.log(err)
                             return callback(err, null) //returns null if error is present.
-                        } else if (res.length != 0) {
-                            return callback(err, 409) //returns error 409 to app.js
-                        } else {
-                            var sql = `SELECT * FROM address WHERE address = ? AND address2 = ? AND district = ? AND city_id = ? AND postal_code = ? AND phone = ?` //this query checks if the address is already present in the database.
-                            conn.query(sql, [address.address_line1, address.address_line2, address.district, address.city_id, address.postal_code, address.phone], (err, res) => {
-                                if (err) {
-                                    console.log(err)
-                                    return callback(err, null) //returns null if error is present.
-                                } else {
-                                    if (res.length == 0) { //this statement executes if the address is NOT present in the system.
-                                        sql = `INSERT INTO address (address, address2, district, city_id, postal_code, phone) VALUES (?, ?, ?, ?, ?, ?)` //this query adds the address to the database.
-                                        conn.query(sql, [address.address_line1, address.address_line2, address.district, address.city_id, address.postal_code, address.phone], (err, res) => {
-                                            newAddressId = res.insertId //stores the added address id.
-                                            if (err) {
-                                                console.log(err)
-                                                return callback(err, null) //returns null if error is present.
-                                            } else {
-                                                var sql = `INSERT INTO staff (first_name, last_name, address_id, email, store_id, active, username, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)` //this next query adds the staff details to the table.
-                                                conn.query(sql, [details.first_name, details.last_name, newAddressId, details.email, details.store_id, details.active, details.username, details.password], (err, res) => {
-                                                    conn.end()
-                                                    if (err) {
-                                                        console.log(err)
-                                                        return callback(err, null) //returns null if error is present.
-                                                    } else {
-                                                        return callback(null, res) // sends response back to the front end
-                                                    }
-                                                })
-                                            }
-                                        }
-                                        )
-                                    } else { //this statement executs if the address is present in the system
-                                        var sql = `INSERT INTO staff (first_name, last_name, address_id, email, store_id, active, username, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)` // this next query addsd the staff details into the database.
-                                        var addressId = res[0].address_id
-                                        conn.query(sql, [details.first_name, details.last_name, addressId, details.email, details.store_id, details.active, details.username, details.password], (err, res) => {
+                        } else if (res.length == 0) { //this statement executes if the address is NOT present in the system.
+                                sql = `INSERT INTO address (address, address2, district, city_id, postal_code, phone) VALUES (?, ?, ?, ?, ?, ?)` //this query adds the address to the database.
+                                conn.query(sql, [address.address_line1, address.address_line2, address.district, address.city_id, address.postal_code, address.phone], (err, res) => {
+                                    newAddressId = res.insertId //stores the added address id.
+                                    if (err) {
+                                        console.log(err)
+                                        return callback(err, null) //returns null if error is present.
+                                    } else {
+                                        var sql = `UPDATE staff SET first_name = ? , last_name = ?, address_id = ?, email = ?, store_id = ?, active = 1, password = ?, store_id = ? WHERE staff_id = ?` //this next query adds the staff details to the table.
+                                        conn.query(sql, [details.first_name, details.last_name, newAddressId, details.email, details.store_id, details.password, details.store_id, details.staff_id], (err, res) => {
                                             conn.end()
                                             if (err) {
                                                 console.log(err)
@@ -389,6 +368,17 @@ var storeDB = {
                                             }
                                         })
                                     }
+                            }) 
+                    } else { //this statement executs if the address is present in the system
+                            var sql = `UPDATE staff SET first_name = ? , last_name = ?, address_id = ?, email = ?, store_id = ?, active = 1, password = ?, store_id = ? WHERE staff_id = ?` // this next query addsd the staff details into the database.
+                            var addressId = res[0].address_id
+                            conn.query(sql, [details.first_name, details.last_name, addressId, details.email, details.store_id, details.password, details.store_id, details.staff_id], (err, res) => {
+                                conn.end()
+                                if (err) {
+                                    console.log(err)
+                                    return callback(err, null) //returns null if error is present.
+                                } else {
+                                    return callback(null, res) // sends response back to the front end
                                 }
                             })
                         }
@@ -406,7 +396,7 @@ var storeDB = {
                 console.log(err)
                 return callback(err, null)
             } else {
-                var sql = `SELECT first_name, last_name, staff_id FROM staff WHERE username = ? and password = ?`
+                var sql = `SELECT first_name, last_name, staff_id FROM staff WHERE email = ? and password = ?`
                 conn.query(sql, [username, password], (err, res) => {
                     conn.end()
                     if (err) {
@@ -638,7 +628,7 @@ var storeDB = {
                 conn.query(sql, [id, id] ,(err, res) => {
                     conn.end()
                     if (err) {
-                        console.err(err)
+                        console.log(err)
                         return callback (err, null)
                     } else {
                         return callback(null, res)
@@ -646,6 +636,117 @@ var storeDB = {
                 })
             }
         })
+    },
+    
+    //endpoint 20 => getting list of all stores
+    getAllStores: (callback)=> {
+        var conn = db.getConnection()
+        conn.connect((err) => {
+            if (err){
+                console.log(err)
+                return callback (err, null)
+            } else {
+                sql =`SELECT s.store_id, a.address FROM store s, address a WHERE s.address_id = a.address_id`
+                conn.query(sql, (err, res) => {
+                    conn.end()
+                    if(err){
+                        console.log(err)
+                        return callback(err, null)
+                    } else {
+                        return callback(null, res)
+                    }
+                })
+            }
+        })
+    },
+
+    //endpoint 21 => getting list of all cities
+    getAllCity: (id, callback) =>{
+        var conn = db.getConnection()
+        conn.connect((err) => {
+            if (err) {
+                console.log(err)
+                return callback (err, null)
+            } else {
+                sql = `SELECT city_id, city, country FROM country c, city ct WHERE c.country_id = ct.country_id AND ct.country_id = ?`
+                conn.query(sql, [id], (err, res) => {
+                    conn.end()
+                    if(err){
+                        console.log(err)
+                        return callback(err, null)
+                    } else {
+                        return callback(null, res)
+                    }
+                })
+            }
+        })
+    },
+
+    //endpoint 22 ->  getting list of all countries
+    getAllCountry: (callback) => {
+        var conn = db.getConnection()
+        conn.connect((err) => {
+            if (err){
+                console.log(err)
+                return callback (err, null)
+            } else {
+                sql = `SELECT country_id, country FROM country`
+                conn.query(sql, (err, res) => {
+                    conn.end()
+                    if(err){
+                        console.log(err)
+                        return callback(err, null)
+                    } else {
+                        return callback(null, res)
+                    }
+                })
+            }
+        })
+    },
+    
+    //endpoint 23 -> getting staff details from database
+    getAllStaff: (id, callback) => {
+        var conn = db.getConnection()
+        conn.connect((err) => {
+            if (err){
+                console.log(err)
+                return callback(err, null)
+            } else {
+                sql = `SELECT staff_id, first_name, last_name, email, store_id, username, a.address_id, address, address2, ct.city_id, ct.city, c.country_id, c.country, a.district, a.postal_code, a.phone FROM staff s, address a, city ct, country c WHERE s.address_id = a.address_id AND ct.city_id = a.city_id AND c.country_id = ct.country_id AND s.staff_id = ?`
+                conn.query(sql, id, (err, res) => {
+                    conn.end()
+                    if(err){
+                        console.log(err)
+                        return callback (err, null)
+                    } else {
+                        return callback (null, res)
+                    }
+                })
+            }
+        })
+    },
+
+    //endpoint 24 -> getting customer details from database
+    getAllCustomer: (id, callback) => {
+        var conn = db.getConnection()
+        conn.connect((err) => {
+            if (err){
+                console.log(err)
+                return callback (err, null)
+            } else {
+                sql = `SELECT customer_id, first_name, last_name, email, store_id, a.address_id, address, address2, ct.city_id, ct.city, c.country_id, c.country, a.district, a.postal_code, a.phone FROM customer cu, address a, city ct, country c WHERE cu.address_id = a.address_id AND ct.city_id = a.city_id AND c.country_id = ct.country_id AND cu.customer_id = ?`
+                conn.query(sql, id , (err, res) => {
+                    conn.end()
+                    if(err){
+                        console.log(err)
+                        return callback(err, null)
+                    } else {
+                        return callback(null, res)
+                    }
+                })
+            }
+        })
+
     }
 }
 

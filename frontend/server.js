@@ -47,6 +47,11 @@ app.get("/admin", (req, res) => {
   res.sendFile("/public/html/admin.html", { root: __dirname });
 })
 
+app.get("/customer", (req, res) => {
+  res.sendFile("/public/html/cust.html", { root: __dirname });
+})
+
+
 
 app.get("/2223010", (req, res) => {
   res.sendFile("/public/html/test.html", { root: __dirname });

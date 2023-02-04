@@ -13,7 +13,6 @@ var check = (req, res, next) => {
                 res.status(401).send();
                 return;
             } else {
-                console.log(decodedToken)
                 req.decodedToken = decodedToken;
                 next();
             }

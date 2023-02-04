@@ -13,7 +13,7 @@
     <title>SP DVD</title>
 </head>   
 
-<body onload = "onLogin(); onLoad(); onAccess(); ">   
+<body onload = "onLogin(); onLoad(); onAccess();">   
     <!-- navbar -->
     <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
       <div class="container-fluid">
@@ -44,10 +44,10 @@
 
       <!-- end of navbar, start of content -->
       <!-- <div class = "adminBackArrow"><i class="bi bi-arrow-left-square-fill mx-2 mt-5 adminBackArrow" id = "adminBackArrow"></i><span class = "ml-3">Back</span></div> -->
-      <div id = "adminResponse" class="text-center h6 pt-5 d-flex justify-content-center"></div>
+      <div id = "custResponse" class="text-center h6 pt-5 d-flex justify-content-center"></div>
       <div id = container>
         <div id = "row">
-            <div id = "adminInput" class="col-md-8 mx-auto text-center h6 pt-3"></div>
+            <div id = "custInput" class="col-md-8 mx-auto text-center h6 pt-3"></div>
         </div>
       <div id = "responseDiv"></div>
       <div id = "returnBtn" class = "text-center py-5"><button class = "btn btn-warning" onclick = backToLogin()>Return</button></div>
@@ -56,7 +56,7 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src = "../javascript/commonFunc.js"></script>
     <!-- <script src ="../javascript/test.js"></script> -->
-    <script src ="../javascript/admin.js"></script>
+    <script src ="../javascript/cust.js"></script>
     <script src="../javascript/checkLoggedIn.js"></script>
 </body>   
 </html>

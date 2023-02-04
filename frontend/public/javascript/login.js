@@ -26,7 +26,7 @@ $("#site-login").submit((event) => {
                         </div>`)
                     setInterval(() => {
                         $("#loginAlert").remove()
-                    }, 1500)
+                    }, 2000)
                 }
 
             })
@@ -36,8 +36,6 @@ $("#site-login").submit((event) => {
                 console.log(response)
                 htmlData = `<div class = "alert  alert-success text-center py-5" role = "alert" id = "loginAlert"><p>Welcome, ${response.data.result.first_name} ${response.data.result.last_name}.</p><p>Page will refresh shortly.</p></div>`
                 $("#site-login").append(htmlData)
-                console.log(response.data)
-                console.log(response.data.customer_id)
                 localStorage.setItem("token", response.data.token)
                 localStorage.setItem("customerID", response.data.result.customer_id)
                 localStorage.setItem("role", "customer")
@@ -55,7 +53,7 @@ $("#site-login").submit((event) => {
                         </div>`)
                     setInterval(() => {
                         $("#loginAlert").remove()
-                    }, 1500)
+                    }, 2000)
                 }
 
             })

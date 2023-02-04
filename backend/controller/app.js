@@ -132,18 +132,19 @@ app.get("/customer/:customer_id/payment", (req, res) => {
 })
 
 //endpoint 8
-app.post("/customers", (req, res) => {
+app.put("/customer", (req, res) => {
     var details = req.body
     var address = details.address
     storeDB.postNewCustomer(details, address, (err, result) => {
         if (err) {
+            console.log(err)
             res.status(500).json({ "error_msg": "Internal server error" }) //sends error message in json format w/ error 500
         } else if (result == 400) {
             res.status(400).json({ "error_msg": "missing data" }) //sends error message in json format w/ error 400
         } else if (result == 1062) {
             res.status(409).send({ "error_msg": "email already exist" }) //sends error message in json format w/ error 409
         } else {
-            res.status(201).json({ "customer_id": result.insertId.toString() }) //sends successful msg
+            res.status(200).json(result) //sends successful msg
         }
     })
 })
@@ -166,18 +167,18 @@ app.post("/country", (req, res) => {
 })
 
 //endpoint 10 -> posting new staff
-app.post("/staff", (req, res) => {
+app.put("/staff", (req, res) => {
     var details = req.body
     var address = details.address
+    console.log(details)
+    console.log(address)
     storeDB.postNewStaff(details, address, (err, result) => {
         if (err) {
             res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
-        } else if (result == 409) {
-            res.status(409).send({ "error_msg": "Staff's e-mail already present in system!" }) //sends error message in json format w/ error 409
         } else if (result == 400) {
             res.status(400).json({ "error_msg": "Missing Data!" }) //sends error message in json format w/ error 400
         } else {
-            res.status(201).json({ "insertID": result.insertId.toString() }) //sends successful msg
+            res.status(200).json({result}) //sends successful msg
         }
     })
 })
@@ -230,7 +231,6 @@ app.post("/custLogin", (req, res) => {
         } else if (result == 403) {
             res.status(403).json({ "error_msg": "person not verified" })
         } else {
-            console.log(result)
             const payload = { customer_id: result.customer_id }
             jwt.sign(payload, key, { algorithm: "HS256" }, (error, token) => {
                 if (err) {
@@ -322,6 +322,68 @@ app.get("/getActor/:actor_id", (req, res) =>{
     })
 })
 
+//endpoint 20 => getting list of all stores
+app.get("/getAllStores", (req, res) => {
+    storeDB.getAllStores((err, result) => {
+        if (err) {
+            res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
+        } else {
+            res.status(200).json(result)
+        }
+    })
+})
+
+//endpoint 21 => getting list of all cities
+app.post("/getAllCities", (req, res) => {
+    id = req.body.id
+    storeDB.getAllCity(id, (err, result) => {
+        if (err) {
+            res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
+        } else {
+            res.status(200).json(result)
+        }
+    })
+})
+
+//endpoint 22 ->  getting list of all countries
+app.get("/getAllCountry", (req, res) => {
+    searchStr = req.body.searchStr
+    storeDB.getAllCountry((err, result) => {
+        if (err) {
+            res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
+        } else {
+            res.status(200).json(result)
+        }
+    })
+})
+
+//endpoint 23 -> geeting staff details from database
+app.get("/getAllStaff/:id", (req, res) => {
+    var id = req.params.id
+    storeDB.getAllStaff(id, (err, result) => {
+        if (err) {
+            res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
+        } else {
+            res.status(200).json(result[0])
+        }
+    })
+})
+
+//endpoint 24 -> getting customer details from database
+app.get("/getAllCustomer/:id", (req, res) => {
+    var id = req.params.id
+    storeDB.getAllCustomer(id, (err, result) => {
+        if (err) {
+            console.log(err)
+            res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
+        } else {
+            res.status(200).json(result[0])
+        }
+    })
+})
+
+
+ 
 
 
 module.exports = app
