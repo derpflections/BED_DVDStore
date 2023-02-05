@@ -3,7 +3,6 @@
 //Class: DAAA/FT/1B/05
 
 function badLoginRedir() {
-    console.log(`test`)
     window.location.href = "/"
 }
 
@@ -21,7 +20,6 @@ function onLogin() {
         return
     } else {
         const baseUrl = "http://localhost:3000"
-        console.log(localStorage.role)
         if (localStorage.role == "staff"){
             axios.get(`${baseUrl}/adminCheck`, { headers: { "Authorization": "Bearer " + reqBody.token } })
                 .then((response) => {

@@ -37,7 +37,6 @@ $("#site-login").submit((event) => {
     } else if ($("#loginType").val() == "customer"){
         axios.post(`${baseUrl}/custLogin`, { email: $("#user").val(), password: $("#pwd").val()})
             .then ((response) => {
-                console.log(response)
                 htmlData = `<div class = "alert  alert-success text-center py-5" role = "alert" id = "loginAlert"><p>Welcome, ${response.data.result.first_name} ${response.data.result.last_name}.</p><p>Page will refresh shortly.</p></div>`
                 $("#site-login").append(htmlData)
                 localStorage.setItem("token", response.data.token)

@@ -163,7 +163,6 @@ function onAccess() {
             axios.post(`${baseUrl}/getAllCities`, { id: $("#countrySelect").val() })
                 .then((response) => {
                     htmlData = ""
-                    console.log(response.status)
                     resp = response.data
                     resp.forEach((city) => {
                         htmlData += (`<option value = "${city.city_id}">${city.city}</option>`)
@@ -309,7 +308,6 @@ function onAccess() {
             axios.post(`${baseUrl}/getAllCities`, { id: $("#countrySelect").val() })
                 .then((response) => {
                     htmlData = ""
-                    console.log(response.status)
                     resp = response.data
                     resp.forEach((city) => {
                         htmlData += (`<option value = "${city.city_id}">${city.city}</option>`)
@@ -381,7 +379,6 @@ function onAccess() {
                         "phone": $("#phone").val(),
                     }
                 }
-                console.log(reqBody3)
                 axios.put(`${baseUrl}/staff`, reqBody3)
                     .then((response) => {
                         if (response.status == 200) {

@@ -14,7 +14,6 @@ $("#fcat-query").submit((event) =>{
     }
     axios.post(`${baseUrl}/filmSearch`, reqBody)
         .then((response) => {
-            console.log(response.status)
             if(response.status == 204) {
                 document.getElementById("filmresponse").innerHTML = ``
                 htmlData = `<p class = "text-center h4">No films found!</p>`
