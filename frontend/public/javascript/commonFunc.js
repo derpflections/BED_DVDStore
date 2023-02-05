@@ -1,3 +1,7 @@
+//Name: Lee Hong Yi
+//Admin Number: 2223010
+//Class: DAAA/FT/1B/05
+
 var commonFunction = {
     multiStringCapitalize: (inputMultiString) => {
         function stringCapitalize(inputString){

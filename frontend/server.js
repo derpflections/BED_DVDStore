@@ -1,3 +1,7 @@
+//Name: Lee Hong Yi
+//Admin Number: 2223010
+//Class: DAAA/FT/1B/05
+
 const express = require("express");
 const serveStatic = require("serve-static");
 
@@ -50,15 +54,6 @@ app.get("/admin", (req, res) => {
 app.get("/customer", (req, res) => {
   res.sendFile("/public/html/cust.html", { root: __dirname });
 })
-
-
-
-app.get("/2223010", (req, res) => {
-  res.sendFile("/public/html/test.html", { root: __dirname });
-})
-
-
-
 
 app.listen(port, hostname, () => {
   console.log(`Server hosted at http://${hostname}:${port}`);

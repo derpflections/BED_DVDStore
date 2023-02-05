@@ -1,3 +1,7 @@
+//Name: Lee Hong Yi
+//Admin Number: 2223010
+//Class: DAAA/FT/1B/05
+
 const baseUrl = "http://localhost:3000"
 
 $("#fcat-query").submit((event) =>{
