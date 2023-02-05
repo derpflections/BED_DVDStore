@@ -6,6 +6,7 @@ const baseUrl = "http://localhost:3000"
 const pattern = /^.{6,}$/;
 var city = 0
 
+
 function onLoad() {
     taskToDo = localStorage.getItem("accClickItem")
     if (taskToDo == 1 || taskToDo == 3) {
@@ -110,6 +111,7 @@ function onAccess() {
                     </div>
                     <div>
                         <button type = "submit" class = "btn btn-primary mt-3">Submit!</button>
+                        <button type = "reset" class = "btn btn-primary mt-3">Reset</button>
                     </div>
                 </div>
             </form>`)
@@ -135,7 +137,7 @@ function onAccess() {
                         "phone": $("#phone").val(),
                     }
                 }
-                axios.post(`${baseUrl}/customers`, reqBody)
+                axios.post(`${baseUrl}/customers`, reqBody, { headers: { "Authorization": "Bearer " + localStorage.token } })
                     .then((response) => {
                         if (response.status == 201) {
                             $("#responseDiv").html(`<div class = "d-flex justify-content-center pt-4"><div class = "alert alert-success h3" role = "alert">Customer added successfully!</div></div>`)
@@ -151,9 +153,11 @@ function onAccess() {
                         if (error.response.status == 409) {
                             $("#responseDiv").html(`<div class = "d-flex justify-content-center pt-4"><div class = "alert alert-danger h3" role = "alert">Error 409: Duplicate Email!</div></div>`)
                             window.scrollTo(0, document.body.scrollHeight);
-                        }
-                    })
-            }
+                        } else if (error.response.status == 401){
+                            $("#adminResponse").html(`<div class = "d-flex justify-content-center" onclick = "badLoginRedir()" ><div id = adminResponse class="text-center h3 py-5 my-5 alert alert-warning col-md-8"><div class = py-5>Error 403 Forbidden.</div><div class = py-5>You don't have admin rights on this server.</div><div class = py-5>Click here to return to the homepage.</div></div></div>`)
+                    }
+            })
+        }
         })
         $("#countrySelect").on("change", () => {
             axios.post(`${baseUrl}/getAllCities`, { id: $("#countrySelect").val() })
@@ -198,7 +202,7 @@ function onAccess() {
                 "first_name": $("#first_name").val(),
                 "last_name": $("#last_name").val()
             }
-            axios.post(`${baseUrl}/actors`, ReqBody)
+            axios.post(`${baseUrl}/actors`, ReqBody, { headers: { "Authorization": "Bearer " + localStorage.token } })
                 .then((response) => {
                     if (response.status == 201) {
                         $("#responseDiv").html(`<div class = "d-flex justify-content-center pt-4 text-center"><div class = "alert alert-success h2 p-5" role = "alert"><p>Actor added successfully!<p><p>New actor ID is ${response.data.actor_id}</p></div></div>`)
@@ -210,6 +214,8 @@ function onAccess() {
                     console.log(error)
                     if (error.response.status == 400) {
                         $("#responseDiv").html(`<div class = "d-flex justify-content-center pt-4"><div class = "alert alert-danger h3" role = "alert">Error 400: Missing Data!</div></div>`)
+                    } else if (error.response.status == 401){
+                        $("#responseDiv").html(`<div class = "d-flex justify-content-center" onclick = "badLoginRedir()" ><div id = adminResponse class="text-center h3 py-5 my-5 alert alert-warning col-md-8"><div class = py-5>Error 403 Forbidden.</div><div class = py-5>You don't have admin rights on this server.</div><div class = py-5>Click here to return to the homepage.</div></div></div>`)
                     }
                 })
         })
@@ -295,6 +301,7 @@ function onAccess() {
                 </div>
                 <div>
                     <button type = "submit" class = "btn btn-primary mt-3">Submit!</button>
+                    <button type = "reset" class = "btn btn-primary mt-3">Reset</button>
                 </div>
             </div>
         </form>`)
@@ -392,15 +399,6 @@ function onAccess() {
                            $("#adminInput").empty()
                         }
                     })
-            }
-        }).catch((error) => {
-            console.log(error)
-            if (error.response.status == 400) {
-                $("#responseDiv").html(`<div class = "d-flex justify-content-center pt-4 text-center"><div class = "alert alert-danger h2 p-5" role = "alert"><p>Missing information!</p></div></div>`)
-                window.scrollTo(0, document.body.scrollHeight);
-            } else if (error.response.status == 401){
-               $("#adminResponse").html(`<div class = "d-flex justify-content-center" onclick = "badLoginRedir()" ><div id = adminResponse class="text-center h3 py-5 my-5 alert alert-warning col-md-8"><div class = py-5>Error 403 Forbidden.</div><div class = py-5>You don't have sufficient rights to access /admin on this server.</div><div class = py-5>Click here to return to the homepage.</div></div></div>`)
-               $("#adminInput").empty()
             }
         })
     }

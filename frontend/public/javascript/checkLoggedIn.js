@@ -12,9 +12,12 @@ function onLogin() {
     const reqBody = {
         token: localStorage.getItem("token")
     }
-    if (reqBody.token == null || reqBody.token == undefined) {
+    if (reqBody.token == null || reqBody.token == undefined || reqBody.token == "") {
         $("#custResponse").replaceWith(`<div class = "d-flex justify-content-center" onclick = "badLoginRedir()" ><div id = custResponse class="text-center h3 py-5 my-5 alert alert-warning col-md-8"><div class = py-5>Error 403 Forbidden:</div><div class = py-5>Please contact customer service to register a account.</div><div class = py-5>Click here to return to the homepage.</div></div></div>`)
         $("#adminResponse").replaceWith(`<div class = "d-flex justify-content-center" onclick = "badLoginRedir()" ><div id = adminResponse class="text-center h3 py-5 my-5 alert alert-warning col-md-8"><div class = py-5>Error 403 Forbidden.</div><div class = py-5>Please contact customer service to register for a admin account.</div><div class = py-5>Click here to return to the homepage.</div></div></div>`)
+        $("#adminInput").empty()
+        $("#custInput").empty()
+        $("#responseDiv").empty()
         return
     } else {
         const baseUrl = "http://localhost:3000"

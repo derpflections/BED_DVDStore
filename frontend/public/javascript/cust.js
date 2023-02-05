@@ -31,7 +31,6 @@ function onLoad() {
 function onAccess() {
     taskToDo = localStorage.getItem("accClickItem")
     customerId = localStorage.getItem("customerID")
-    console.log(taskToDo)
     if (taskToDo == 4) {
         $("#custResponse").append(`<p class = "h2">Edit account information</p>`)
         $("#custInput").append(`
@@ -126,7 +125,7 @@ function onAccess() {
                     $("#citySelect").html(htmlData)
                 })
         })
-        axios.get(`${baseUrl}/getAllCustomer/${customerId}`)
+        axios.get(`${baseUrl}/getAllCustomer/${customerId}`,  { headers: { "Authorization": "Bearer " + localStorage.token } })
             .then((response) => {
                 console.log(response.data)
                 $("#fname").val(`${response.data.first_name}`)
@@ -169,8 +168,8 @@ function onAccess() {
                 const reqBody3 = {
                     "customer_id": customerId,
                     "store_id": $("#store_id").val(),
-                    "first_name": $("#fname").val(),
-                    "last_name": $("#lname").val(),
+                    "first_name": $("#fname").val().toUpperCase(),
+                    "last_name": $("#lname").val().toUpperCase(),
                     "email": $("#email").val(),
                     "password": $("#password").val(),
                     "address": {
@@ -182,7 +181,7 @@ function onAccess() {
                         "phone": $("#phone").val(),
                     }
                 }
-                axios.put(`${baseUrl}/customer`, reqBody3)
+                axios.put(`${baseUrl}/customer`, reqBody3, {headers: { "Authorization": "Bearer " + localStorage.token } })
                     .then((response) => {
                         if (response.status == 200) {
                             $("#responseDiv").html(`<div class = "d-flex justify-content-center pt-4 text-center"><div class = "alert alert-success h2 p-5" role = "alert"><p>Information Updated!</p><p>Refreshing page...</p></div></div>`)
@@ -193,6 +192,10 @@ function onAccess() {
                         console.log(error)
                         if (error.response.status == 400) {
                             $("#responseDiv").html(`<div class = "d-flex justify-content-center pt-4 text-center"><div class = "alert alert-danger h2 p-5" role = "alert"><p>Missing information!</p></div></div>`)
+                            window.scrollTo(0, document.body.scrollHeight);
+                        } else if (error.response.status == 401){
+                            console.log(`unauth`)
+                            $("#responseDiv").html(`<div class = "d-flex justify-content-center" onclick = "badLoginRedir()" ><div id = adminResponse class="text-center h3 py-5 my-5 alert alert-warning col-md-8"><div class = py-5>Error 403 Forbidden.</div><div class = py-5>You don't have admin rights on this server.</div><div class = py-5>Click here to return to the homepage.</div></div></div>`)
                             window.scrollTo(0, document.body.scrollHeight);
                         }
                     })
@@ -218,6 +221,7 @@ function onAccess() {
                 </div>
                 <div>
                     <button type = "submit" class = "btn btn-primary mt-3">Submit!</button>
+                    <button type = "reset" class = "btn btn-primary mt-3">Reset</button>
                 </div>
             </form>`)
         $("#payHist").submit((event) => {
@@ -225,9 +229,10 @@ function onAccess() {
             axios.get(`${baseUrl}/customer/${customerId}/payment`, {params: {
                 start_date: $("#start").val(),
                 end_date: $("#end").val()
-            }})
+            }}, {headers: { "Authorization": "Bearer " + localStorage.token } })
             .then((response) => {
                 resp = response.data.rental
+                console.log(response.data)
                 htmlData = ""
                 resp.forEach((film) => {
                    htmlData += `
@@ -241,8 +246,11 @@ function onAccess() {
                 $("#responseDiv").html(`<table class = "table px-5"><thead><tr><th>Title</th><th>Price</th><th>Rental Date</th></tr></thead>${htmlData}</table>`)
             })
             .catch((err) => {
+                console.log(err)
                 if(err.response.status == 406){
                     $("#responseDiv").html(`<div class = "d-flex justify-content-center pt-4 text-center"><div class = "alert alert-danger h2 p-5" role = "alert"><p>Please enter valid information!</p></div></div>`)
+                } else if (err.response.status == 401){
+                    $("#responseDiv").html(`<div class = "d-flex justify-content-center" onclick = "badLoginRedir()" ><div id = adminResponse class="text-center h3 py-5 my-5 alert alert-warning col-md-8"><div class = py-5>Error 403 Forbidden.</div><div class = py-5>You don't have admin rights on this server.</div><div class = py-5>Click here to return to the homepage.</div></div></div>`)
                 }
             })
         })

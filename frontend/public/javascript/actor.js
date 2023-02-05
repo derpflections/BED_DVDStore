@@ -15,6 +15,7 @@ $("#actor-query").submit((event) =>{
             if(response.status == 204) {
                 $("#response").empty()
                 htmlData = `<p>Actor not found!</p>`
+                $("#response").html(`<div class = "alert alert-warning text-center h4 py-5"><div>No such actor(s) found!</div></div>`)
             } else {
                 $("#response").empty()
                 resp = response.data

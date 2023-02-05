@@ -54,7 +54,7 @@ app.get('/actors', (req, res) => {
 })
 
 //endpoint 3
-app.post("/actors", (req, res) => {
+app.post("/actors", verify, (req, res) => {
     var actor_details = { 'first_name': req.body.first_name, 'last_name': req.body.last_name }
     storeDB.addActor(actor_details, (err, result) => {
         if (err) {
@@ -116,7 +116,7 @@ app.get("/film_categories/:category_id/films", (req, res) => {
 })
 
 //endpoint 7 
-app.get("/customer/:customer_id/payment", (req, res) => {
+app.get("/customer/:customer_id/payment", verify,(req, res) => {
     var customer_id = req.params.customer_id
     var start_date = req.query.start_date
     var end_date = req.query.end_date
@@ -124,6 +124,8 @@ app.get("/customer/:customer_id/payment", (req, res) => {
         totalSum = 0
         if (err) {
             if (err.errno = 1525) {
+                res.status(406).json({"error_msg":"Invalid input"})
+            } else if (err == 406){
                 res.status(406).json({"error_msg":"Invalid input"})
             } else {
                 res.status(500).json({ "error_msg": "Internal server error" }) //sends error message in json format w/ error 500
@@ -143,7 +145,7 @@ app.get("/customer/:customer_id/payment", (req, res) => {
 })
 
 //endpoint 8
-app.put("/customer", (req, res) => {
+app.put("/customer", verify,(req, res) => {
     var details = req.body
     var address = details.address
     customerDB.postNewCustomer(details, address, (err, result) => {
@@ -387,7 +389,7 @@ app.get("/getAllStaff/:id", verify, (req, res) => {
 })
 
 //endpoint 24 -> getting customer details from database
-app.get("/getAllCustomer/:id", (req, res) => {
+app.get("/getAllCustomer/:id", verify,(req, res) => {
     var id = req.params.id
     customerDB.getAllCustomer(id, (err, result) => {
         if (err) {
@@ -395,6 +397,26 @@ app.get("/getAllCustomer/:id", (req, res) => {
             res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
         } else {
             res.status(200).json(result[0])
+        }
+    })
+})
+
+//endpoint 25 ->  adding new customer to database
+app.post("/customers", verify,(req, res) => {
+    var details = req.body
+    var address = details.address
+    customerDB.addNewCustomer(details, address, (err, result) => {
+        if (err) {
+            console.log(err)
+            res.status(500).json({ "error_msg": "Internal server error" }) //sends error message in json format w/ error 500
+        } else if (result == 400) {
+            res.status(400).json({ "error_msg": "missing data" }) //sends error message in json format w/ error 400
+        } else if (result == 1062) {
+            res.status(409).send({ "error_msg": "email already exist" }) //sends error message in json format w/ error 409
+        } else if (result == 403) {
+            res.status(403).json({ "error_msg": "person not verified" }) 
+        } else {
+            res.status(201).json(result) //sends successful msg
         }
     })
 })
