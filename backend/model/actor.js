@@ -10,7 +10,7 @@ function bodyChecker(var1, var2) { //used in endpoint 3 to check for missing dat
 
 var storeDB = {
     //endpoint 1
-    getActor: (actor_id, callback) => {
+    getActor: (first_name, last_name, callback) => {
         var conn = db.getConnection();
         conn.connect((err) => { //establishes connection with database
             if (err) {
@@ -18,17 +18,16 @@ var storeDB = {
                 return callback(err, null) //returns null response if error is present
             } else {
                 console.log("Connected to database!")
-                var sql = `SELECT actor_id, first_name, last_name FROM actor WHERE actor_id = ?` //retreives actor_id, first_name and last_name from the table for specific actor
-                conn.query(sql, actor_id, (err, res) => {
+                var sql = `SELECT * FROM actor WHERE first_name LIKE "%${first_name}%" AND last_name LIKE "%${last_name}%"` //retreives actor_id, first_name and last_name from the table for specific actor
+                conn.query(sql, (err, res) => {
                     conn.end(); //ends connection
                     if (err) {
                         console.log(err);
                         return callback(err, null); // returns null response if error is present
-                    } else if (res[0] === undefined) {
+                    } else if (res.length == 0) {
                         return callback(null, 204) //sends error code 204 back to app.js
                     } else {
-                        res[0]['actor_id'] = res[0]['actor_id'].toString() //converts the actor_id to a string 
-                        return callback(null, res[0]) //removes the square brackets from the response
+                        return callback(null, res) //removes the square brackets from the response
                     }
                 })
             }
@@ -198,7 +197,7 @@ var storeDB = {
                 conn.query(sql, [customer_id, start_date, end_date], (err, res) => {
                     conn.end()
                     if (err) {
-                        console.log(err)
+                        // console.log(err)
                         return callback(err, null) //returns null if error is present.
                     } else {
                         return callback(null, res) // sends response back to the front end
@@ -233,8 +232,8 @@ var storeDB = {
                                         console.log(err)
                                         return callback(err, null) //returns null if error is present.
                                     } else {
-                                        var sql = `UPDATE customer SET store_id = ?, first_name = ?, last_name = ?, address_id = ?, password = ?`
-                                        conn.query(sql, [details.store_id, details.first_name, details.last_name, newAddressId, details.password], (err, res) => {
+                                        var sql = `UPDATE customer SET store_id = ?, first_name = ?, last_name = ?, address_id = ?, password = ? WHERE customer_id = ?`
+                                        conn.query(sql, [details.store_id, details.first_name, details.last_name, newAddressId, details.password, details.customer_id], (err, res) => {
                                             conn.end()
                                             if (err) {
                                                 console.log(err)
@@ -246,9 +245,9 @@ var storeDB = {
                                     }
                             }) 
                     } else { //this statement executs if the address is present in the system
-                            var sql = `UPDATE customer SET store_id = ?, first_name = ?, last_name = ? , address_id = ?, password = ?`
+                            var sql = `UPDATE customer SET store_id = ?, first_name = ?, last_name = ? , address_id = ?, password = ? WHERE customer_id = ?`
                             var addressId = res[0].address_id
-                            conn.query(sql, [details.store_id, details.first_name, details.last_name, addressId,details.password], (err, res) => {
+                            conn.query(sql, [details.store_id, details.first_name, details.last_name, addressId, details.password, details.customer_id], (err, res) => {
                                 conn.end()
                                 if (err) {
                                     console.log(err)

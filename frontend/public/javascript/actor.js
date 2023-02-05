@@ -1,29 +1,39 @@
 $("#actor-query").submit((event) =>{
     event.preventDefault();
     const reqBody = {
-        queryID: $("#actor_id").val()
+        first_name : $("#first_name").val(),
+        last_name : $("#last_name").val()
     }
     const baseUrl = "http://localhost:3000"
-    const actorID = reqBody.queryID
-    axios.get(`${baseUrl}/actors/${actorID}`)
+    axios.post(`${baseUrl}/actorSearch`, reqBody)
         .then((response) => {
             console.log(response)
             if(response.status == 204) {
-                document.getElementById("response").innerHTML = ``
+                $("#response").empty()
                 htmlData = `<p>Actor not found!</p>`
             } else {
-                document.getElementById("response").innerHTML = ``
-                console.log(response.data)
+                $("#response").empty()
                 resp = response.data
-                htmlData = `
-                                <p>First Name: ${commonFunction.multiStringCapitalize(resp.first_name)}</p>
-                                <p>Last Name: ${commonFunction.multiStringCapitalize(resp.last_name)}</p>`;
+                console.log(resp)
+
+                resp.forEach((actor) => {
+                    $("#response").append(`<div class = "actorResponse col-md-6" id = "actor${actor.actor_id}"onclick = clickActor(actor${actor.actor_id})>
+                        <div class = py-2>
+                            <div>First name: ${commonFunction.multiStringCapitalize(actor.first_name)}</div>
+                            <div>Last name: ${commonFunction.multiStringCapitalize(actor.last_name)}</div>
+                        <div>
+                    </div>`)
+                })
             }
-            $("#response").append(htmlData)
-            // 
         }) 
         .catch((error) => {
             console.log(error)
         })
 })
+
+function clickActor (emitter) {
+    console.log(emitter.id.replace("actor", ""))
+    localStorage.setItem("clickActor", emitter.id.replace("actor",""))
+    window.location.assign('/actorDetails')
+}
 

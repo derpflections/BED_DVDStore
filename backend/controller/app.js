@@ -19,9 +19,10 @@ app.use(cors())
 
 
 //endpoint 1
-app.get("/actors/:actor_id", (req, res) => {
-    var actor_id = req.params.actor_id
-    storeDB.getActor(actor_id, (err, result) => {
+app.post("/actorSearch", (req, res) => {
+    var first_name = req.body.first_name
+    var last_name = req.body.last_name
+    storeDB.getActor(first_name, last_name, (err, result) => {
         if (err) {
             res.status(500).json({ "error_msg": "Internal Server Error" }); //sends error message in json format w/ err code 500
         } else if (result === 204) {
@@ -103,7 +104,7 @@ app.get("/film_categories/:category_id/films", (req, res) => {
                 result[i].release_year = result[i].release_year.toString()
                 result[i].duration = result[i].duration.toString()
             }
-            res.status(200).json(result) //sends successful msg
+        res.status(200).json(result) //sends successful msg
         }
     })
 })
@@ -116,7 +117,11 @@ app.get("/customer/:customer_id/payment", (req, res) => {
     storeDB.getPaymentDetails(customer_id, start_date, end_date, (err, result) => {
         totalSum = 0
         if (err) {
-            res.status(500).json({ "error_msg": "Internal server error" }) //sends error message in json format w/ error 500
+            if (err.errno = 1525) {
+                res.status(406).json({"error_msg":"Invalid input"})
+            } else {
+                res.status(500).json({ "error_msg": "Internal server error" }) //sends error message in json format w/ error 500
+            }
         } else {
             for (i = 0; i < result.length; i++) { //this for loop adds the result into a variable, and changes it into a string.
                 totalSum += result[i].amount
@@ -357,16 +362,22 @@ app.get("/getAllCountry", (req, res) => {
     })
 })
 
-//endpoint 23 -> geeting staff details from database
-app.get("/getAllStaff/:id", (req, res) => {
+//endpoint 23 -> getting staff details from database
+app.get("/getAllStaff/:id", verify, (req, res) => {
     var id = req.params.id
-    storeDB.getAllStaff(id, (err, result) => {
-        if (err) {
-            res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
-        } else {
-            res.status(200).json(result[0])
-        }
-    })
+    console.log(req.decodedToken)
+    var role = req.decodedToken
+    if (role.staff_id == undefined){
+        res.status(401).json({"error_msg":"Not authorized!"})
+    } else {
+        storeDB.getAllStaff(id, (err, result) => {
+            if (err) {
+                res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
+            } else {
+                res.status(200).json(result[0])
+            }
+        })
+    }
 })
 
 //endpoint 24 -> getting customer details from database

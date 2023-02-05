@@ -35,3 +35,29 @@
 #response h2 {
     margin: 0 0 15px;
 }
+
+div.visit{
+    transition: all 0.08s linear;
+    color: black;
+    background-color: #3b3939;
+    border: 1px solid black;
+    box-shadow: 5px rgba(255,255,255,0.5);
+}
+
+div.visit:hover {
+    transform: translate(-10px, -10px);
+    box-shadow:10px 10px #777777;
+    background-color: #ADB5BD;
+}
+
+div.visit:hover > *{
+    color:black
+}
+
+div.filmTable:active {
+    background-color: #797d82;
+}
+
+a{
+    text-decoration: none;
+}

@@ -297,7 +297,7 @@ function onAccess() {
         $("#countrySelect").on("change", () => {
             axios.post(`${baseUrl}/getAllCities`, { id: $("#countrySelect").val() })
                 .then((response) => {
-                    htmlData = ""   
+                    htmlData = ""
                     console.log(response.status)
                     resp = response.data
                     resp.forEach((city) => {
@@ -306,7 +306,7 @@ function onAccess() {
                     $("#citySelect").html(htmlData)
                 })
         })
-        axios.get(`${baseUrl}/getAllStaff/${staffId}`)
+        axios.get(`${baseUrl}/getAllStaff/${staffId}`, { headers: { "Authorization": "Bearer " + localStorage.token } })
             .then((response) => {
                 $("#fname").val(`${response.data.first_name}`)
                 $("#lname").val(`${response.data.last_name}`)
@@ -325,18 +325,27 @@ function onAccess() {
                     $("#addrline2").val(`${response.data.address2}`)
                 }
                 axios.post(`${baseUrl}/getAllCities`, { id: $("#countrySelect").val() })
-                .then((response2) => {
-                    htmlData = ""   
-                    resp = response2.data
-                    resp.forEach((city) => {
-                        if (city.city_id == response.data.city_id){
-                            htmlData += (`<option value = "${city.city_id}" selected>${city.city}</option>`)
-                        } else {
-                            htmlData += (`<option value = "${city.city_id}">${city.city}</option>`)
-                        }
+                    .then((response2) => {
+                        htmlData = ""
+                        resp = response2.data
+                        resp.forEach((city) => {
+                            if (city.city_id == response.data.city_id) {
+                                htmlData += (`<option value = "${city.city_id}" selected>${city.city}</option>`)
+                            } else {
+                                htmlData += (`<option value = "${city.city_id}">${city.city}</option>`)
+                            }
+                        })
+                        $("#citySelect").html(htmlData)
                     })
-                    $("#citySelect").html(htmlData)
-                })
+            }).catch((error) => {
+                console.log(error)
+                if (error.response.status == 400) {
+                    $("#responseDiv").html(`<div class = "d-flex justify-content-center pt-4 text-center"><div class = "alert alert-danger h2 p-5" role = "alert"><p>Missing information!</p></div></div>`)
+                    window.scrollTo(0, document.body.scrollHeight);
+                } else if (error.response.status == 401){
+                   $("#adminResponse").html(`<div class = "d-flex justify-content-center" onclick = "badLoginRedir()" ><div id = adminResponse class="text-center h3 py-5 my-5 alert alert-warning col-md-8"><div class = py-5>Error 403 Forbidden.</div><div class = py-5>You don't have sufficient rights to access /admin on this server.</div><div class = py-5>Click here to return to the homepage.</div></div></div>`)
+                   $("#adminInput").empty()
+                }
             })
 
         $("#editAcc").submit((event) => {
@@ -364,23 +373,35 @@ function onAccess() {
                 console.log(reqBody3)
                 axios.put(`${baseUrl}/staff`, reqBody3)
                     .then((response) => {
-                        if (response.status == 200){
+                        if (response.status == 200) {
                             $("#responseDiv").html(`<div class = "d-flex justify-content-center pt-4 text-center"><div class = "alert alert-success h2 p-5" role = "alert"><p>Information Updated!</p><p>Refreshing page...</p></div></div>`)
-                            setTimeout(() => {window.location.assign("/login")}, 750)
+                            setTimeout(() => { window.location.assign("/login") }, 750)
                             window.scrollTo(0, document.body.scrollHeight)
                         }
                     }).catch((error) => {
                         console.log(error)
-                        if (error.response.status == 400){
+                        if (error.response.status == 400) {
                             $("#responseDiv").html(`<div class = "d-flex justify-content-center pt-4 text-center"><div class = "alert alert-danger h2 p-5" role = "alert"><p>Missing information!</p></div></div>`)
                             window.scrollTo(0, document.body.scrollHeight);
+                        } else if (error.response.status == 401){
+                           $("#adminResponse").html(`<div class = "d-flex justify-content-center" onclick = "badLoginRedir()" ><div id = adminResponse class="text-center h3 py-5 my-5 alert alert-warning col-md-8"><div class = py-5>Error 403 Forbidden.</div><div class = py-5>You don't have sufficient rights to access /admin on this server.</div><div class = py-5>Click here to return to the homepage.</div></div></div>`)
+                           $("#adminInput").empty()
                         }
                     })
+            }
+        }).catch((error) => {
+            console.log(error)
+            if (error.response.status == 400) {
+                $("#responseDiv").html(`<div class = "d-flex justify-content-center pt-4 text-center"><div class = "alert alert-danger h2 p-5" role = "alert"><p>Missing information!</p></div></div>`)
+                window.scrollTo(0, document.body.scrollHeight);
+            } else if (error.response.status == 401){
+               $("#adminResponse").html(`<div class = "d-flex justify-content-center" onclick = "badLoginRedir()" ><div id = adminResponse class="text-center h3 py-5 my-5 alert alert-warning col-md-8"><div class = py-5>Error 403 Forbidden.</div><div class = py-5>You don't have sufficient rights to access /admin on this server.</div><div class = py-5>Click here to return to the homepage.</div></div></div>`)
+               $("#adminInput").empty()
             }
         })
     }
 }
 
-function backToLogin(){
+function backToLogin() {
     window.location.assign("/login")
 }

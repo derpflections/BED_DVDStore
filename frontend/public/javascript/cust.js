@@ -203,9 +203,14 @@ function onAccess() {
         $("#custInput").append(`
             <form id = "payHist">
                 <div class="input-group">
-                    <span class="input-group-text">Start and End Date</span>
-                    <input type="date" id = "start" class="form-control" required>
-                    <input type="date" id="end" class="form-control" required>
+                    <div class = "paymentFormStart">
+                        <label for = "start>Start Date: </label>
+                        <input type="date" id = "start" class="form-control" required>
+                    </div>
+                    <div class = "paymentFormEnd">
+                        <label for = "end">End Date: </label>
+                        <input type="date" id = "end" class="form-control" required>
+                    </div>
                 </div>
                 <div>
                     <button type = "submit" class = "btn btn-primary mt-3">Submit!</button>
@@ -213,14 +218,11 @@ function onAccess() {
             </form>`)
         $("#payHist").submit((event) => {
             event.preventDefault()
-            console.log($("#start").val())
-            console.log($("#end").val())
             axios.get(`${baseUrl}/customer/${customerId}/payment`, {params: {
                 start_date: $("#start").val(),
                 end_date: $("#end").val()
             }})
             .then((response) => {
-                console.log(response.data)
                 resp = response.data.rental
                 htmlData = ""
                 resp.forEach((film) => {
@@ -232,7 +234,12 @@ function onAccess() {
                         </tr>
                     `
                 })
-                $("#responseDiv").append(`<table class = "table px-5"><thead><tr><th>Title</th><th>Price</th><th>Rental Date</th></tr></thead>${htmlData}</table>`)
+                $("#responseDiv").html(`<table class = "table px-5"><thead><tr><th>Title</th><th>Price</th><th>Rental Date</th></tr></thead>${htmlData}</table>`)
+            })
+            .catch((err) => {
+                if(err.response.status == 406){
+                    $("#responseDiv").html(`<div class = "d-flex justify-content-center pt-4 text-center"><div class = "alert alert-danger h2 p-5" role = "alert"><p>Please enter valid information!</p></div></div>`)
+                }
             })
         })
 
