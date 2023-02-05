@@ -95,7 +95,6 @@ var filmDB = {
                     searchTerm = "\'%"
                     searchTerm += `${title}`
                     sql += `AND f.title LIKE ${searchTerm}%\'`
-                    sqlArray.push(title)
                 }
                 if (price != "") {
                     sql += `AND f.rental_rate <= ? `
