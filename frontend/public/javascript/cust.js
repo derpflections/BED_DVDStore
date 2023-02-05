@@ -201,13 +201,13 @@ function onAccess() {
     } else if (taskToDo == 5) {
         $("#custResponse").append(`<p class = "h2">View Payment History</p>`)
         $("#custInput").append(`
-            <form id = "payHist">
-                <div class="input-group">
-                    <div class = "paymentFormStart">
-                        <label for = "start>Start Date: </label>
+            <form id = "payHist" class = "container-fluid">
+                <div class="input-group row col-md-6">
+                    <div class = "paymentFormStart col-md-6">
+                        <label for = "start" >Start Date: </label>
                         <input type="date" id = "start" class="form-control" required>
                     </div>
-                    <div class = "paymentFormEnd">
+                    <div class = "paymentFormEnd col-md-6">
                         <label for = "end">End Date: </label>
                         <input type="date" id = "end" class="form-control" required>
                     </div>

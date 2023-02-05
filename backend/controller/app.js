@@ -7,11 +7,17 @@ const express = require('express');
 const app = express()
 const bodyParser = require('body-parser')
 const urlencodedParser = bodyParser.urlencoded({ extended: false })
-const storeDB = require("../model/actor.js");
 const cors = require("cors")
 const key = require("../config.js")
 const verify = require("../auth/verify.js")
 const jwt = require("jsonwebtoken")
+
+const storeDB = require("../model/actor.js");
+const customerDB = require("../model/customer.js");
+const loginDB = require("../model/login.js");
+const staffDB = require("../model/staff.js");
+const filmDB = require("../model/film.js");
+
 
 app.use(bodyParser.json());
 app.use(urlencodedParser);
@@ -96,7 +102,7 @@ app.delete("/actors/:actor_id", (req, res) => {
 //endpoint 6 
 app.get("/film_categories/:category_id/films", (req, res) => {
     var category_id = req.params.category_id
-    storeDB.getCategory(category_id, (err, result) => {
+    filmDB.getCategory(category_id, (err, result) => {
         if (err) {
             res.status(500).json({ "error_msg": "Internal server error" }) //sends error message in json format w/ error 500
         } else {
@@ -114,7 +120,7 @@ app.get("/customer/:customer_id/payment", (req, res) => {
     var customer_id = req.params.customer_id
     var start_date = req.query.start_date
     var end_date = req.query.end_date
-    storeDB.getPaymentDetails(customer_id, start_date, end_date, (err, result) => {
+    customerDB.getPaymentDetails(customer_id, start_date, end_date, (err, result) => {
         totalSum = 0
         if (err) {
             if (err.errno = 1525) {
@@ -140,7 +146,7 @@ app.get("/customer/:customer_id/payment", (req, res) => {
 app.put("/customer", (req, res) => {
     var details = req.body
     var address = details.address
-    storeDB.postNewCustomer(details, address, (err, result) => {
+    customerDB.postNewCustomer(details, address, (err, result) => {
         if (err) {
             console.log(err)
             res.status(500).json({ "error_msg": "Internal server error" }) //sends error message in json format w/ error 500
@@ -177,7 +183,7 @@ app.put("/staff", (req, res) => {
     var address = details.address
     console.log(details)
     console.log(address)
-    storeDB.postNewStaff(details, address, (err, result) => {
+    staffDB.postNewStaff(details, address, (err, result) => {
         if (err) {
             res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
         } else if (result == 400) {
@@ -192,7 +198,7 @@ app.put("/staff", (req, res) => {
 app.post("/adminLogin", (req, res) => {
     var username = req.body.username
     var password = req.body.password
-    storeDB.staffLogin(username, password, (err, result) => {
+    loginDB.staffLogin(username, password, (err, result) => {
         if (err) {
             res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
         } else if (result == 403) {
@@ -215,7 +221,7 @@ app.post("/adminLogin", (req, res) => {
 //endpoint 12 -> checking staff on startup
 app.get("/adminCheck", verify, (req, res) => {
     var staffid = req.decodedToken.staff_id
-    storeDB.staffVerify(staffid, (err, result) => {
+    loginDB.staffVerify(staffid, (err, result) => {
         if (err) {
             res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
         } else if (result == 403) {
@@ -230,7 +236,7 @@ app.get("/adminCheck", verify, (req, res) => {
 app.post("/custLogin", (req, res) => {
     var email = req.body.email
     var password = req.body.password
-    storeDB.custLogin(email, password, (err, result) => {
+    loginDB.custLogin(email, password, (err, result) => {
         if (err) {
             res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
         } else if (result == 403) {
@@ -252,7 +258,7 @@ app.post("/custLogin", (req, res) => {
 //endpoint 14 -> checks if customer login is valid
 app.get("/custCheck", verify, (req, res) => {
     var customer_id = req.decodedToken.customer_id
-    storeDB.custVerify(customer_id, (err, result) => {
+    loginDB.custVerify(customer_id, (err, result) => {
         if (err) {
             res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
         } else if (result == 403) {
@@ -265,7 +271,7 @@ app.get("/custCheck", verify, (req, res) => {
 
 //endpoint 15 -> checks for category of films
 app.get("/filmCat", (req, res) => {
-    storeDB.filmCatList((err, result) => {
+    filmDB.filmCatList((err, result) => {
         if (err){
             res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
         } else {
@@ -276,7 +282,7 @@ app.get("/filmCat", (req, res) => {
 
 //endpoint 16 -> gets distinct list of ratings
 app.get("/filmRating", (req, res) => {
-    storeDB.filmRatingList((err, result) => {
+    filmDB.filmRatingList((err, result) => {
         if (err){
             res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
         } else {
@@ -292,7 +298,7 @@ app.post("/filmSearch", (req, res) => {
     var title = req.body.title
     var price = req.body.price
     // console.log(req.body.category)
-    storeDB.filmSearch(category, rating, title, price, (err, result) => {
+    filmDB.filmSearch(category, rating, title, price, (err, result) => {
         if (err){
             res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
         } else if (result == 204){
@@ -306,7 +312,7 @@ app.post("/filmSearch", (req, res) => {
 //endpoint 18 -> get all film details based on id 
 app.get("/filmGet/:film_id", (req, res) => {
     var id = req.params.film_id
-    storeDB.getFilmDetails(id, (err, result) => {
+    filmDB.getFilmDetails(id, (err, result) => {
         if (err){
             res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
         } else {
@@ -318,7 +324,7 @@ app.get("/filmGet/:film_id", (req, res) => {
 //endpoint 19 -> gets films that actor has acted in 
 app.get("/getActor/:actor_id", (req, res) =>{
     var id = req.params.actor_id
-    storeDB.getActorFilms(id, (err, result) => {
+    filmDB.getActorFilms(id, (err, result) => {
         if (err){
             res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
         } else {
@@ -370,7 +376,7 @@ app.get("/getAllStaff/:id", verify, (req, res) => {
     if (role.staff_id == undefined){
         res.status(401).json({"error_msg":"Not authorized!"})
     } else {
-        storeDB.getAllStaff(id, (err, result) => {
+        staffDB.getAllStaff(id, (err, result) => {
             if (err) {
                 res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
             } else {
@@ -383,7 +389,7 @@ app.get("/getAllStaff/:id", verify, (req, res) => {
 //endpoint 24 -> getting customer details from database
 app.get("/getAllCustomer/:id", (req, res) => {
     var id = req.params.id
-    storeDB.getAllCustomer(id, (err, result) => {
+    customerDB.getAllCustomer(id, (err, result) => {
         if (err) {
             console.log(err)
             res.status(500).json({ "error_msg": "Internal server error!" }) //sends error message in json format w/ error 500
