@@ -11,7 +11,6 @@ $("#actor-query").submit((event) =>{
     const baseUrl = "http://localhost:3000"
     axios.post(`${baseUrl}/actorSearch`, reqBody)
         .then((response) => {
-            console.log(response)
             if(response.status == 204) {
                 $("#response").empty()
                 htmlData = `<p>Actor not found!</p>`
@@ -19,7 +18,6 @@ $("#actor-query").submit((event) =>{
             } else {
                 $("#response").empty()
                 resp = response.data
-                console.log(resp)
 
                 resp.forEach((actor) => {
                     $("#response").append(`<div class = "actorResponse col-md-6" id = "actor${actor.actor_id}"onclick = clickActor(actor${actor.actor_id})>

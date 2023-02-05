@@ -117,7 +117,6 @@ function onAccess() {
             axios.post(`${baseUrl}/getAllCities`, { id: $("#countrySelect").val() })
                 .then((response) => {
                     htmlData = ""
-                    console.log(response.status)
                     resp = response.data
                     resp.forEach((city) => {
                         htmlData += (`<option value = "${city.city_id}">${city.city}</option>`)
@@ -127,7 +126,6 @@ function onAccess() {
         })
         axios.get(`${baseUrl}/getAllCustomer/${customerId}`,  { headers: { "Authorization": "Bearer " + localStorage.token } })
             .then((response) => {
-                console.log(response.data)
                 $("#fname").val(`${response.data.first_name}`)
                 $("#lname").val(`${response.data.last_name}`)
                 $("#email").val(`${response.data.email}`)
@@ -194,7 +192,6 @@ function onAccess() {
                             $("#responseDiv").html(`<div class = "d-flex justify-content-center pt-4 text-center"><div class = "alert alert-danger h2 p-5" role = "alert"><p>Missing information!</p></div></div>`)
                             window.scrollTo(0, document.body.scrollHeight);
                         } else if (error.response.status == 401){
-                            console.log(`unauth`)
                             $("#responseDiv").html(`<div class = "d-flex justify-content-center" onclick = "badLoginRedir()" ><div id = adminResponse class="text-center h3 py-5 my-5 alert alert-warning col-md-8"><div class = py-5>Error 403 Forbidden.</div><div class = py-5>You don't have admin rights on this server.</div><div class = py-5>Click here to return to the homepage.</div></div></div>`)
                             window.scrollTo(0, document.body.scrollHeight);
                         }
@@ -232,7 +229,6 @@ function onAccess() {
             }}, {headers: { "Authorization": "Bearer " + localStorage.token } })
             .then((response) => {
                 resp = response.data.rental
-                console.log(response.data)
                 htmlData = ""
                 resp.forEach((film) => {
                    htmlData += `
