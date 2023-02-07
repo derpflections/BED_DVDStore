@@ -226,7 +226,7 @@ function onAccess() {
             axios.get(`${baseUrl}/customer/${customerId}/payment`, {params: {
                 start_date: $("#start").val(),
                 end_date: $("#end").val()
-            }}, {headers: { "Authorization": "Bearer " + localStorage.token } })
+            }, headers: { "Authorization": "Bearer " + localStorage.token } })
             .then((response) => {
                 resp = response.data.rental
                 htmlData = ""
